@@ -1,10 +1,18 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { GrAdd } from "react-icons/gr";
 import { SlFeed, SlGraduation, SlTag,SlPresent,SlPeople, SlExclamation } from "react-icons/sl";
 import { FcGallery, FcCollaboration,FcParallelTasks, FcDislike } from "react-icons/fc";
 import { TbUsers, TbZoomQuestion , TbPlus} from "react-icons/tb";
 import { MdPeople, MdOutlinePowerSettingsNew , MdLogout} from "react-icons/md";
-function SideBar() {
+import axios from 'axios';
+import { userType } from '../types/index';
+import useGetUsers  from '../hooks/useGetUsers';
+interface sidebarProps {
+  selectReceiver: (user: userType) => void;
+  receiverId: string | undefined;
+}
+
+function SideBar( {selectReceiver,receiverId} : sidebarProps) {
   const groups = [
   {
     
@@ -62,20 +70,29 @@ function SideBar() {
     },
    
   ]
+
+ 
+const { users, isLoading, errors } = useGetUsers();
+
+if (isLoading) {
+  return <div>Loading...</div>;
+}
+
+if (errors) {
+  return <div>Error: </div>;
+}
   return (
     <div className='min-w-[96px]   bg-gray-100  flex flex-col items-center  justify-between gap-5  h-screen   pt-10 	px-3  overflow-x-hidden  overflow-y-hidden w-24	 '>
       <div className='flex  flex-col items-center justify-center gap-3 '>
         <div className='flex flex-col justify-center items-center'>
           <p className='mb-5 text-xs text-light-color  font-semibold '> Groups</p>
-        
           <div className='  bg-white w-10 h-10 flex justify-center items-center rounded-full'>
-          <TbPlus size={24} color='#905FF4'  />
-        </div>
+            <TbPlus size={24} color='#905FF4'  />
+          </div>
           {groups.map((group,index) => (
-            
             index == 3  ?  
-              <div key={index} onClick={()=> console.log(index)
-              } className='flex items-center mt-2 '>
+              <div key={index} 
+              className='flex items-center mt-2 '>
                 <div className=' bg-white w-10 h-10 flex justify-center items-center rounded-full  border-3  border-purple-500 border-solid'>
                   {group.icon}
                 </div>
@@ -86,21 +103,18 @@ function SideBar() {
                   {group.icon}
                 </div>
               </div>
-            ))
-          }
+            ))}   
       </div>
-      
       <div className='flex flex-col justify-center items-center '>
           <p className='mb-5 text-xs text-light-color font-semibold'> People</p>
         <div className='  bg-white w-10 h-10 flex justify-center items-center rounded-full'>
           <TbPlus size={24} color='#905FF4'  />
         </div>
-        { members.map((member,index) => (
+        { users.map((member,index) => (
           index ==1 ? 
-            <div key={index} className='flex items-center mt-3 justify-center relative'>
+            <div key={index} onClick={()=> selectReceiver(member)}  className='flex items-center mt-3 justify-center relative'>
               <div className="w-10 h-10 overflow-hidden rounded-full ">
               <img src={member.image} alt="..." className="shadow rounded-full max-w-full h-auto align-middle border-none" />
-                
               <div className="absolute w-4 h-4 bg-purple-200 bg-opacity-40 rounded-full -top-0.5 -right-0.5 flex justify-center items-center ">
                 <div className="relative w-2 h-2 bg-purple-600 rounded-full  "></div>
               </div>
@@ -108,11 +122,10 @@ function SideBar() {
               
             </div>
             : 
-             <div key={index} className='flex items-center mt-3 justify-center relative'>
-             <div className="w-10 h-10 overflow-hidden rounded-full ">
-             <img src={member.image} alt="..." className="shadow rounded-full max-w-full h-auto align-middle border-none" />
-           
-             </div>
+             <div key={index} onClick={()=> selectReceiver(member)}  className='flex items-center mt-3 justify-center relative'>
+              <div className="w-10 h-10 overflow-hidden rounded-full ">
+                <img src={member.image} alt="..." className="shadow rounded-full max-w-full h-auto align-middle border-none" />
+              </div>
              
            </div>
            ))}

@@ -7,8 +7,8 @@ export interface MessageTypes {
   time: string;
 }
 export interface userType {
-  id: string;
+  _id: string;
   fullName: string;
   email: string;
-  profile: string;
+  image: string;
 }
