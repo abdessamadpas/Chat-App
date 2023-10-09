@@ -53,13 +53,13 @@ io.on('connection', socket => {
     socket.on('send-message', async newMessage => {
         socket.to(newMessage.chatId).emit('receive-message', newMessage);
         saveMessageOnDB(newMessage);
-            (newMessage.sender,newMessage.receiver );
+        setNotifications(newMessage.sender,newMessage.receiver );
     })
     socket.on('disconnect', () => {
     });
 })
 
-// routes
+// welcome message
 app.get('/', (req, res) => {
     res.json('hello me');
 });
@@ -71,6 +71,14 @@ app.use('/auth', auth.UpdateUser); // todo done
 app.use('/auth', auth.DeleteUser);// todo done
 app.use('/auth', auth.getAllUsers);// todo done
 app.use('/auth', auth.getUserById);// todo done
+
+
+// test 
+app.post ('/setnotif', (req,res) => {
+    const {senderId,receiverId} = req.body;
+    setNotifications(senderId,receiverId)
+    res.send('done')
+})
 
 // * routes chat
 

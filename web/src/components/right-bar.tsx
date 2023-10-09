@@ -62,7 +62,7 @@ const members = [
  
 ]
 function RightBar() {
-
+ const username =  localStorage.getItem("username");
   return (
     <div   className='hidden  lg:block    h-screen overflow-y-auto overflow-x-hidden  w-96  '>
         <div className='   py-16 px-5   '>
@@ -72,16 +72,12 @@ function RightBar() {
         <div className="w-10 h-10 overflow-hidden rounded-full ">
                   <img src="https://images.unsplash.com/photo-1551847812-f815b31ae67c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80" alt="..." className="w-full h-full object-cover"/>
                 </div>
-
-            <p className='font-semibold text-sm '>Abdessamad Pas</p>
-          
+            <p className='font-semibold text-sm '>{username}</p>    
         </div>
         <div className='flex flex-row justify-center items-center gap-1 '>
           <MdNotificationsNone size={20} color='#C6C6C6'  />
           <MdMoreVert size={20} color='#C6C6C6'  />
         </div>
-        
-
       </div>
        {/* 2 */}
       <div className='mt-10'>
@@ -102,10 +98,7 @@ function RightBar() {
             </div>
           ))}
           <p className=' text-sm mt-3  text-text-main-color  font-medium'> View all</p>
-        </div>
-       
-        
-
+        </div>     
       </div>
        {/* 3 */}
        <div className='mt-10'>
@@ -126,12 +119,9 @@ function RightBar() {
                 </div>
               </div>
               {element.leader ? 
-             
                 <p className=' flex-1 text-sm text-gray-400 font-medium' >Group leader</p>
-              
-              : null
-              
-             }
+              : null }
+            
             </div>
           ))}
         </div>

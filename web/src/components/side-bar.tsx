@@ -90,7 +90,7 @@ if (errors) {
             <TbPlus size={24} color='#905FF4'  />
           </div>
           {groups.map((group,index) => (
-            index == 3  ?  
+            index === 3  ?  
               <div key={index} 
               className='flex items-center mt-2 '>
                 <div className=' bg-white w-10 h-10 flex justify-center items-center rounded-full  border-3  border-purple-500 border-solid'>
@@ -111,10 +111,10 @@ if (errors) {
           <TbPlus size={24} color='#905FF4'  />
         </div>
         { users.map((member,index) => (
-          index ==1 ? 
+          index ===1 ? 
             <div key={index} onClick={()=> selectReceiver(member)}  className='flex items-center mt-3 justify-center relative'>
               <div className="w-10 h-10 overflow-hidden rounded-full ">
-              <img src={member.image} alt="..." className="shadow rounded-full max-w-full h-auto align-middle border-none" />
+              <img src={member.image} alt={member.fullName} className="shadow rounded-full max-w-full h-auto align-middle border-none" />
               <div className="absolute w-4 h-4 bg-purple-200 bg-opacity-40 rounded-full -top-0.5 -right-0.5 flex justify-center items-center ">
                 <div className="relative w-2 h-2 bg-purple-600 rounded-full  "></div>
               </div>
@@ -124,7 +124,7 @@ if (errors) {
             : 
              <div key={index} onClick={()=> selectReceiver(member)}  className='flex items-center mt-3 justify-center relative'>
               <div className="w-10 h-10 overflow-hidden rounded-full ">
-                <img src={member.image} alt="..." className="shadow rounded-full max-w-full h-auto align-middle border-none" />
+                <img src={member.image} alt={member.fullName}  className="shadow rounded-full max-w-full h-auto align-middle border-none" />
               </div>
              
            </div>
