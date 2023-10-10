@@ -2,13 +2,13 @@ import e from 'express';
 import React from 'react'
 import { FcDislike } from "react-icons/fc";
 import { MdMap , MdCall, MdMoreVert, MdMicNone, MdOutlineTagFaces,MdSend, MdAttachFile} from "react-icons/md";
-import { MessageTypes } from '../types';
+import { MessageTypes, userType } from '../types';
 import { socket } from "../pages/ChatPage";
 
 
 interface sendBoxProps {
   chatId: string;
-  receiver: string;
+  receiver: userType;
   messages: MessageTypes[];
   setMessages: React.Dispatch<React.SetStateAction<MessageTypes[]>>;
 
@@ -23,7 +23,7 @@ async function sendMessage() {
   const messageData: MessageTypes = {
     chatId: chatId,
     sender: user as string,
-    receiver: receiver,
+    receiver: receiver._id,
     content: message,
     time: `${new Date(Date.now()).getHours()}:${new Date(
       Date.now()
@@ -47,7 +47,7 @@ const [sentMessages, setSentMessages] = React.useState<MessageTypes[]>([]);
             <FcDislike size={20} color='#905FF4'  />
           </div>
           <div >
-            <p className=' font-semibold  text-xl'>After quarantine party group</p>
+            <p className=' font-semibold  text-xl'>{receiver.username}</p>
             <p className=' font-extralight  text-xs text-gray-400'>10 members</p>
           </div>
         </div>

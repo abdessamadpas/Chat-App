@@ -8,6 +8,8 @@ import { log } from "console";
 import useGetMessages from "../hooks/useGetMessages";
 import useGetNotification from "../hooks/useGetNotifications";
 import useDeleteNotification from "../hooks/useDeleteNotifications";
+import PopupModel from "../components/popup-model";
+import useGetUsers from "../hooks/useGetUsers";
 export const socket = io("http://localhost:1337");
  const userId = localStorage.getItem("userId") ;
 
@@ -20,6 +22,18 @@ const ChatPage = () => {
   const {fetchMessages, errors} = useGetMessages();
   const { errors: notifsErrors, notifications, isLoading } = useGetNotification(userId as string );
   const deleteNotification = useDeleteNotification();
+  const { users, isLoading : isLoadingUsers, errors : usersErrors } = useGetUsers();
+
+  //todo : popup model
+  const [isOpened, setIsOpened] = useState(false);
+  const togglePopup = () => {
+    setIsOpened(!isOpened);
+  };
+  useEffect(() => {
+    console.log('isOpened',isOpened);
+    
+  }, [isOpened])
+
 
   //todo : get all  messages
 
@@ -45,6 +59,8 @@ const ChatPage = () => {
   }, [isLoading]);
   
   const selectReceiver = async (receiver: userType) => {
+    console.log('receiver is ',receiver);
+    
     const generatedChatId = [receiver._id, userId].sort().join("-");
     setChatId(generatedChatId);
     setReceiver(receiver);
@@ -115,13 +131,20 @@ const ChatPage = () => {
         <SideBar  
           selectReceiver={selectReceiver}
           receiverId={receiver?._id}
+          isOpened = {isOpened}
+          togglePopup = {togglePopup}
         />
+        {isOpened ? <PopupModel 
+        togglePopup={togglePopup} 
+        isOpen={isOpened} 
+        users = {users}  /> 
+        : null}
         {receiver ? 
           <ChatSection 
             chatId={chatId}
             messages={messages}
             setMessages={setMessages}
-            receiver={receiver._id}
+            receiver={receiver}
           /> :   <div className=' flex-initial relative  w-4/5 my-5 rounded-2xl bg-white  h-[calc(100vh-<height-of-your-fixed-div>)]' >
       </div>
           

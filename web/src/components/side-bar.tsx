@@ -10,9 +10,11 @@ import useGetUsers  from '../hooks/useGetUsers';
 interface sidebarProps {
   selectReceiver: (user: userType) => void;
   receiverId: string | undefined;
+  isOpened: boolean;
+  togglePopup: () => void;
 }
 
-function SideBar( {selectReceiver,receiverId} : sidebarProps) {
+function SideBar( {selectReceiver,receiverId, isOpened, togglePopup} : sidebarProps) {
   const groups = [
   {
     
@@ -87,7 +89,7 @@ if (errors) {
         <div className='flex flex-col justify-center items-center'>
           <p className='mb-5 text-xs text-light-color  font-semibold '> Groups</p>
           <div className='  bg-white w-10 h-10 flex justify-center items-center rounded-full'>
-            <TbPlus size={24} color='#905FF4'  />
+            <TbPlus size={24} color='#905FF4' onClick={togglePopup}  />
           </div>
           {groups.map((group,index) => (
             index === 3  ?  
@@ -114,7 +116,7 @@ if (errors) {
           index ===1 ? 
             <div key={index} onClick={()=> selectReceiver(member)}  className='flex items-center mt-3 justify-center relative'>
               <div className="w-10 h-10 overflow-hidden rounded-full ">
-              <img src={member.image} alt={member.fullName} className="shadow rounded-full max-w-full h-auto align-middle border-none" />
+              <img src={member.image} alt={member.username} className="shadow rounded-full max-w-full h-auto align-middle border-none" />
               <div className="absolute w-4 h-4 bg-purple-200 bg-opacity-40 rounded-full -top-0.5 -right-0.5 flex justify-center items-center ">
                 <div className="relative w-2 h-2 bg-purple-600 rounded-full  "></div>
               </div>
@@ -124,7 +126,7 @@ if (errors) {
             : 
              <div key={index} onClick={()=> selectReceiver(member)}  className='flex items-center mt-3 justify-center relative'>
               <div className="w-10 h-10 overflow-hidden rounded-full ">
-                <img src={member.image} alt={member.fullName}  className="shadow rounded-full max-w-full h-auto align-middle border-none" />
+                <img src={member.image} alt={member.username}  className="shadow rounded-full max-w-full h-auto align-middle border-none" />
               </div>
              
            </div>
