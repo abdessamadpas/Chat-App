@@ -5,7 +5,7 @@ const useDeleteConversationMsgs = () => {
 
   const deleteConversationMsgs = async (id: string, chatId:string) => {
     try {
-      const response = await fetch(`http://localhost:8080/messages/${id}?chatId=${chatId}`, {
+      const response = await fetch(`http://localhost:1337/messages/${id}?chatId=${chatId}`, {
         method: "DELETE",
       });
 

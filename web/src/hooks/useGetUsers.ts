@@ -15,7 +15,7 @@ const fetchUsers = async () => {
             'Authorization': `Basic ${token}` 
           }
         });
-        console.log(res);
+
         setUsers(res.data.data);
         setIsLoading(false);
       } catch (err) {
@@ -27,7 +27,7 @@ const fetchUsers = async () => {
     
   
     if (token) {
-      console.log(token);
+    
       
       fetchUsers();
     } else {

@@ -15,12 +15,13 @@ const useGetNotification = (userId: string) => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:8080/notifications/${userId}`
+          `http://localhost:1337/notifications/${userId}`
         );
 
         if (!response.ok) throw new Error("failed fetching notifications.");
 
         const result = await response.json();
+        
         setNotifications(result.notifications);
       } catch (error) {
         setErrors(error);

@@ -4,7 +4,7 @@ const useDeleteNotification = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8080/notifications?sender=${sender}&receiver=${receiver}`,
+        `http://localhost:1337/notifications?sender=${sender}&receiver=${receiver}`,
         {method: "DELETE"}
       );
 

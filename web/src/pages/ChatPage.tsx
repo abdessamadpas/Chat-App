@@ -5,25 +5,63 @@ import RightBar from "../components/right-bar";
 import { userType , MessageTypes} from "../types";
 import io from "socket.io-client";
 import { log } from "console";
+import useGetMessages from "../hooks/useGetMessages";
+import useGetNotification from "../hooks/useGetNotifications";
+import useDeleteNotification from "../hooks/useDeleteNotifications";
 export const socket = io("http://localhost:1337");
  const userId = localStorage.getItem("userId") ;
 
 const ChatPage = () => {
-  console.log(userId);
+  console.log('user connected is ',userId);
   const [chatId, setChatId] = useState<string>("");
   const [messages, setMessages] = useState<MessageTypes[]>([]);
   const [receiver, setReceiver] = useState<userType | null>(null);
   const [unreadmessage, setUnreadmessage] = useState(new Map<string, number>());
+  const {fetchMessages, errors} = useGetMessages();
+  const { errors: notifsErrors, notifications, isLoading } = useGetNotification(userId as string );
+  const deleteNotification = useDeleteNotification();
 
-useEffect(() => {
-  console.log(messages);
-}
-, [messages]);
+  //todo : get all  messages
+
+  useEffect(() => {
+    console.log('fetching messages');
+    
+    const fetchingMessages = async () => {
+      const fetchedMessages = await fetchMessages(userId , receiver?._id );
+      fetchedMessages
+        ? setMessages([...fetchedMessages])
+        : console.log("fetching failed", errors);
+    };
+    fetchingMessages();
+  }, [unreadmessage]);
+  useEffect(() => { console.log(' messages', messages);
+  }, [messages]);
+
+  //todo : get all  notifications
+  useEffect(() => {
+    setUnreadmessage(
+      new Map(notifications.map((notify) => [notify.sender, notify.count]))
+    );
+  }, [isLoading]);
   
   const selectReceiver = async (receiver: userType) => {
     const generatedChatId = [receiver._id, userId].sort().join("-");
     setChatId(generatedChatId);
     setReceiver(receiver);
+    
+    //! delete unread message from unreadmessage map 
+    //todo : create a new map and delete the unread message from it for Immutability and State Consistency 🤟🏿
+    setUnreadmessage((unreadmessage) => {
+      const newUnreadmessage = new Map(unreadmessage);
+      newUnreadmessage.delete(receiver._id);
+      return newUnreadmessage;
+    });
+    
+    const isnotifyDeleted = await deleteNotification(
+      userId as string,
+      receiver?._id
+    );
+    if (!isnotifyDeleted) console.log("failed delete notifications 🙂");
 
     socket.emit("join-chat", {
       receiverId: receiver._id,
@@ -42,15 +80,26 @@ useEffect(() => {
 
     const handleReceiveMessages = (newMessage: MessageTypes) => {
       setMessages((messages) => [...messages, newMessage]);
-
+      // check if he is the receiver
       if (receiver?._id === newMessage.sender) return;
 
-  
+      setUnreadmessage((prevMessages) => {
+        const updateUnreadmessages = new Map(prevMessages);
+
+        if (!updateUnreadmessages.has(newMessage.sender)) {
+          updateUnreadmessages.set(newMessage.sender, 1);
+          return updateUnreadmessages;
+        }
+        updateUnreadmessages.set(
+          newMessage.sender,
+          updateUnreadmessages.get(newMessage.sender)! + 1
+        );
+        return updateUnreadmessages;
+      });
     };
 
-
     socket.on("join-chat-req", handleJoinChat);
-      socket.on("receive-message", handleReceiveMessages);
+    socket.on("receive-message", handleReceiveMessages);
 
       return () => {
         socket.off("join-chat");

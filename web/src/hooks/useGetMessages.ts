@@ -4,9 +4,9 @@ const useGetMessages = () => {
   const [errors, setErros] = useState<unknown>(null);
 
     
-      const fetchMessages = async (id:string) => {
+      const fetchMessages = async (senderId:any, receiverId:any) => {
         try {
-          const response = await fetch(`http://localhost:8080/messages/${id}`);
+          const response = await fetch(`http://localhost:1337/messages/${senderId}/${receiverId}`);
           
           if (!response.ok) throw new Error("failed get messages");
           

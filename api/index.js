@@ -7,14 +7,14 @@ const dotenv = require("dotenv");
 const auth = require('./routes/auth.js');
 
 const {
-    clearChat,
+    clearChat,getUsers,
     getMessages,
     saveMessageOnDB,
     setNotifications,
     getNotifications,
     deleteNotification
 } = require("./controller/");
-const  {addUser,getUsers}  = require("./controller/getUsers");
+const  {addUser,}  = require("./controller/getUsers");
 
 const app = express();
 app.use(cors());
@@ -81,6 +81,10 @@ app.post ('/setnotif', (req,res) => {
 })
 
 // * routes chat
+app.get('/messages/:senderId/:receiverId', getMessages);
+app.delete('/messages/:userId', clearChat);
+app.get('/notifications/:id', getNotifications);
+app.delete("/notifications", deleteNotification);
 
     
 
