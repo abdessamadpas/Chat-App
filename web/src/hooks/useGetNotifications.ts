@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 interface notificationType {
-    sender:string;
-     count:number
+  sender: string;
+  count: number;
 }
 
 const useGetNotification = (userId: string) => {
-  const [notifications, setNotifications] = useState<notificationType[] | []>([]);
+  const [notifications, setNotifications] = useState<notificationType[] | []>(
+    [],
+  );
   const [errors, setErrors] = useState<unknown>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -15,13 +17,13 @@ const useGetNotification = (userId: string) => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:1337/notifications/${userId}`
+          `http://localhost:1337/notifications/${userId}`,
         );
 
-        if (!response.ok) throw new Error("failed fetching notifications.");
+        if (!response.ok) throw new Error('failed fetching notifications.');
 
         const result = await response.json();
-        
+
         setNotifications(result.notifications);
       } catch (error) {
         setErrors(error);
@@ -33,6 +35,5 @@ const useGetNotification = (userId: string) => {
   }, []);
   return { notifications, errors, isLoading };
 };
-
 
 export default useGetNotification;
