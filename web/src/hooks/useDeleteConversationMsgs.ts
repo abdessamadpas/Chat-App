@@ -23,5 +23,4 @@ const useDeleteConversationMsgs = () => {
 
   return { deleteConversationMsgs, errors };
 };
-
 export default useDeleteConversationMsgs;

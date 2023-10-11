@@ -1,20 +1,18 @@
-import React, {useEffect, useState} from 'react'
-import { GrAdd } from "react-icons/gr";
-import { SlFeed, SlGraduation, SlTag,SlPresent,SlPeople, SlExclamation } from "react-icons/sl";
+import {useEffect, useState} from 'react'
 import { FcGallery, FcCollaboration,FcParallelTasks, FcDislike } from "react-icons/fc";
-import { TbUsers, TbZoomQuestion , TbPlus} from "react-icons/tb";
+import { TbPlus} from "react-icons/tb";
 import { MdPeople, MdOutlinePowerSettingsNew , MdLogout} from "react-icons/md";
-import axios from 'axios';
 import { userType } from '../types/index';
-import useGetUsers  from '../hooks/useGetUsers';
+import useRequestFriend from '../hooks/useRequestFriend';
 interface sidebarProps {
   selectReceiver: (user: userType) => void;
   receiverId: string | undefined;
   isOpened: boolean;
   togglePopup: () => void;
+  user : string | null;
 }
 
-function SideBar( {selectReceiver,receiverId, isOpened, togglePopup} : sidebarProps) {
+function SideBar( {selectReceiver,receiverId, isOpened, togglePopup, user} : sidebarProps) {
   const groups = [
   {
     
@@ -74,15 +72,24 @@ function SideBar( {selectReceiver,receiverId, isOpened, togglePopup} : sidebarPr
   ]
 
  
-const { users, isLoading, errors } = useGetUsers();
+const {getFriends , requestFriend, isLoading} = useRequestFriend();
+const [friends, setFriends] = useState<userType[] | []>([]);
 
-if (isLoading) {
-  return <div>Loading...</div>;
-}
+useEffect(() => {
+  const getFriendsAsync = async () => {
+    const friends = await getFriends(user as string);
+    console.log('friends fethce',friends);
+    
+     friends ? setFriends([...friends]) : console.log('failed to get friends');
+  };
+  getFriendsAsync();
+},[]);
 
-if (errors) {
-  return <div>Error: </div>;
-}
+// if (isLoading) {
+//   return <div>Loading...</div>;
+// }
+
+
   return (
     <div className='min-w-[96px]   bg-gray-100  flex flex-col items-center  justify-between gap-5  h-screen   pt-10 	px-3  overflow-x-hidden  overflow-y-hidden w-24	 '>
       <div className='flex  flex-col items-center justify-center gap-3 '>
@@ -112,7 +119,7 @@ if (errors) {
         <div className='  bg-white w-10 h-10 flex justify-center items-center rounded-full'>
           <TbPlus size={24} color='#905FF4'  />
         </div>
-        { users.map((member,index) => (
+        { friends?.map((member,index) => (
           index ===1 ? 
             <div key={index} onClick={()=> selectReceiver(member)}  className='flex items-center mt-3 justify-center relative'>
               <div className="w-10 h-10 overflow-hidden rounded-full ">

@@ -7,14 +7,17 @@ const dotenv = require("dotenv");
 const auth = require('./routes/auth.js');
 
 const {
-    clearChat,getUsers,
+    clearChat,
     getMessages,
     saveMessageOnDB,
     setNotifications,
     getNotifications,
-    deleteNotification
+    deleteNotification,
 } = require("./controller/");
-const  {addUser,}  = require("./controller/getUsers");
+
+const  {getUsers}  = require("./controller/getUsers");
+const {addFriend, getFriends} = require("./controller/inviteFriend");
+const setInvitations = require("./controller/invitations.js");
 
 const app = express();
 app.use(cors());
@@ -55,6 +58,13 @@ io.on('connection', socket => {
         saveMessageOnDB(newMessage);
         setNotifications(newMessage.sender,newMessage.receiver );
     })
+    socket.on('send-friend-request', async data => {
+        const {senderId,receiverId} = data;
+        // setNotifications(senderId,receiverId)
+        // setInvitations(senderId,receiverId)
+        socket.to(socket.id).emit('receive-friend-request', data); 
+    })       
+    
     socket.on('disconnect', () => {
     });
 })
@@ -74,19 +84,20 @@ app.use('/auth', auth.getUserById);// todo done
 
 
 // test 
-app.post ('/setnotif', (req,res) => {
+app.get ('/setnotif', (req,res) => {
     const {senderId,receiverId} = req.body;
     setNotifications(senderId,receiverId)
     res.send('done')
 })
+app.get('/users', getUsers);
 
-// * routes chat
+// * routes chat*
+
+app.get('/friends/:userId', getFriends);
+app.post('/addfriend/:sender/:receiver', addFriend);
 app.get('/messages/:senderId/:receiverId', getMessages);
 app.delete('/messages/:userId', clearChat);
 app.get('/notifications/:id', getNotifications);
 app.delete("/notifications", deleteNotification);
-
-    
-
 
 module.exports = app;

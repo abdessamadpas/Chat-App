@@ -31,4 +31,4 @@ const getUsers = async (req, res) => {
     }
 }
 
-module.exports =addUser, getUsers; 
+module.exports ={addUser, getUsers}; 

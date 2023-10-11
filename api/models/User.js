@@ -37,6 +37,13 @@ const UserSchema = new Schema({
         }],
         default: []
     },
+    invitations: {
+        type: [{
+  
+            sender: String
+        }],
+        default: []
+    },    
     blocks: {
         type: Array,
         default: []

@@ -4,16 +4,15 @@ import ChatSection from "../components/chat-section";
 import RightBar from "../components/right-bar";
 import { userType , MessageTypes} from "../types";
 import io from "socket.io-client";
-import { log } from "console";
 import useGetMessages from "../hooks/useGetMessages";
 import useGetNotification from "../hooks/useGetNotifications";
 import useDeleteNotification from "../hooks/useDeleteNotifications";
 import PopupModel from "../components/popup-model";
 import useGetUsers from "../hooks/useGetUsers";
 export const socket = io("http://localhost:1337");
- const userId = localStorage.getItem("userId") ;
 
 const ChatPage = () => {
+  const userId = localStorage.getItem("userId") ;
   console.log('user connected is ',userId);
   const [chatId, setChatId] = useState<string>("");
   const [messages, setMessages] = useState<MessageTypes[]>([]);
@@ -23,6 +22,7 @@ const ChatPage = () => {
   const { errors: notifsErrors, notifications, isLoading } = useGetNotification(userId as string );
   const deleteNotification = useDeleteNotification();
   const { users, isLoading : isLoadingUsers, errors : usersErrors } = useGetUsers();
+
 
   //todo : popup model
   const [isOpened, setIsOpened] = useState(false);
@@ -44,7 +44,7 @@ const ChatPage = () => {
       const fetchedMessages = await fetchMessages(userId , receiver?._id );
       fetchedMessages
         ? setMessages([...fetchedMessages])
-        : console.log("fetching failed", errors);
+        : console.log("fetching messages failed", errors);
     };
     fetchingMessages();
   }, [unreadmessage]);
@@ -53,6 +53,7 @@ const ChatPage = () => {
 
   //todo : get all  notifications
   useEffect(() => {
+    notifications &&
     setUnreadmessage(
       new Map(notifications.map((notify) => [notify.sender, notify.count]))
     );
@@ -113,17 +114,37 @@ const ChatPage = () => {
         return updateUnreadmessages;
       });
     };
-
+    const recieveInvitations = (data: any) => {
+      console.log('recieveInvitations',data);
+      
+    }
+    socket.on("receive-friend-request", recieveInvitations);
     socket.on("join-chat-req", handleJoinChat);
     socket.on("receive-message", handleReceiveMessages);
+
 
       return () => {
         socket.off("join-chat");
         socket.off("join-chat-req");
         socket.off("join-req-accept");
         socket.off("receive-message");
+        socket.off("receive-friend-request");
       };
   }, [receiver]);
+  
+  useEffect(() => {
+    const recieveInvitations = (data: any) => {
+      console.log('receiveInvitations', data);
+      // Handle the friend request here
+    }
+    socket.on("receive-friend-request", recieveInvitations);
+  
+    return () => {
+      socket.off("receive-friend-request");
+    };
+  }, []);
+  
+
 
   return (
     <main className="  w-full  h-screen   overflow-hidden   bg-gray-100 ">
@@ -133,11 +154,14 @@ const ChatPage = () => {
           receiverId={receiver?._id}
           isOpened = {isOpened}
           togglePopup = {togglePopup}
+          user = {userId }
         />
         {isOpened ? <PopupModel 
         togglePopup={togglePopup} 
         isOpen={isOpened} 
-        users = {users}  /> 
+        users = {users} 
+        userId = {userId as string}
+        /> 
         : null}
         {receiver ? 
           <ChatSection 

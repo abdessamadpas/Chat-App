@@ -12,7 +12,7 @@ const useGetMessages = () => {
           
           const result = await response.json();
           
-          return result;
+          return result.data;
         } catch (error) {
           console.log(error);
           setErros(error);
