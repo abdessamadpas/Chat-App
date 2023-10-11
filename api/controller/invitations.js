@@ -16,7 +16,7 @@ const setInvitations  = async (senderId, receiverId) => {
     }
     await User.updateOne(
         { _id: receiverId },
-        { $push: { invitations: { id: idGenerated, sender: senderId } } }
+        { $push: { invitations: { id: idGenerated, sender: senderId ,type :'pending'} } }
       )
     .then((res)=> console.log('invitation sent successfully', res))
     .catch(err => console.log(err));

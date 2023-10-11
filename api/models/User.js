@@ -33,14 +33,21 @@ const UserSchema = new Schema({
         type: [{
             sender: String,
             count: Number,
-            messages: Array,
+            type : {
+                type: String,
+                enum: ["message", "requestFriend"] 
+            },
         }],
         default: []
     },
     invitations: {
         type: [{
   
-            sender: String
+            sender: String,
+            type : {
+                type: String,
+                enum: ["accept", "reject", "pending"] 
+            },
         }],
         default: []
     },    

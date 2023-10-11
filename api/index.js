@@ -44,6 +44,16 @@ const io = new Server(server, {
 });
 
 io.on('connection', socket => {
+//! on work
+    // const people = {};
+
+    // socket.on('join', (name) => {
+    // if (!people[name]) {
+    //     people[name] = [];
+    // }
+    // people[name].push(socket.id);
+    // console.log(`${name} has joined with socket ID: ${socket.id}`);
+    // });
 
     socket.on('join-chat', data => {
         socket.join(data.chatId);
@@ -60,14 +70,15 @@ io.on('connection', socket => {
     })
     socket.on('send-friend-request', async data => {
         const {senderId,receiverId} = data;
-        // setNotifications(senderId,receiverId)
-        // setInvitations(senderId,receiverId)
-        socket.to(socket.id).emit('receive-friend-request', data); 
+        const receiverSocketID = people[receiverId];
+        setNotifications(senderId,receiverId)
+        setInvitations(senderId,receiverId)
+        socket.to(receiverSocketID).emit('receive-friend-request', data); 
     })       
     
     socket.on('disconnect', () => {
     });
-})
+}) 
 
 // welcome message
 app.get('/', (req, res) => {

@@ -1,5 +1,3 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { ChatPage } from './pages';
 import LoginPage from './pages/loginPage';
