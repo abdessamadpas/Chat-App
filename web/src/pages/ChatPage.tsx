@@ -30,6 +30,10 @@ const ChatPage = () => {
     isLoading: isLoadingUsers,
     errors: usersErrors,
   } = useGetUsers();
+  // send ur socket id to the server
+  useEffect(() => {
+    socket.emit('join-user', userId);
+  }, [userId]);
 
   //todo : popup model
   const [isOpened, setIsOpened] = useState(false);

@@ -44,19 +44,20 @@ const io = new Server(server, {
     origin: ["http://localhost:3000", "http://localhost:3001"],
   },
 });
+  const people = {};
 
 io.on("connection", (socket) => {
   //! on work
-  // const people = {};
 
-  // socket.on('join', (name) => {
-  // if (!people[name]) {
-  //     people[name] = [];
-  // }
-  // people[name].push(socket.id);
-  // console.log(`${name} has joined with socket ID: ${socket.id}`);
-  // });
 
+
+  socket.on('join-user', (userId) => {
+    people[userId] = socket.id;
+    console.log(people);
+  });
+  function getUserById(userId) {
+    return people[userId] || null;
+  }
   socket.on("join-chat", (data) => {
     socket.join(data.chatId);
     io.emit("join-chat-req", data);
@@ -70,10 +71,17 @@ io.on("connection", (socket) => {
     setNotifications(newMessage.sender, newMessage.receiver);
   });
   socket.on("send-friend-request", async (data) => {
-    const { senderId, receiverId } = data;
-    const receiverSocketID = people[receiverId];
-    setNotifications(senderId, receiverId);
-    setInvitations(senderId, receiverId);
+ 
+    const { senderId , receiverId  } = data;
+    // setNotifications(senderId, receiverId);
+    // setInvitations(senderId, receiverId);
+
+    const receiverSocketID = getUserById(receiverId);
+    if (receiverSocketID !== null) {
+      console.log(`User ${receiverId} is online with socket ID: ${receiverSocketID}`);
+    } else {
+      console.log(`User ${receiverId} is not found or offline.`);
+    }
     socket.to(receiverSocketID).emit("receive-friend-request", data);
   });
 

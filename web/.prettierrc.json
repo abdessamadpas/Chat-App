@@ -1,7 +1,7 @@
-module.exports = {
+{
+  "plugins": ["prettier"],
+  "extends": ["plugin:prettier/recommended"],
   "semi": true,
-  "trailingComma": 'all',
   "singleQuote": true,
-  "printWidth": 80,
-  // Add other formatting rules...
-};
+  "printWidth": 80
+}
