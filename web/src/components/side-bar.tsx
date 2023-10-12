@@ -103,7 +103,7 @@ function SideBar({
             Groups
           </p>
           <div className="  bg-white w-10 h-10 flex justify-center items-center rounded-full">
-            <TbPlus size={24} color="#905FF4" onClick={togglePopup} />
+            <TbPlus size={24} color="#905FF4" />
           </div>
           {groups.map((group, index) =>
             index === 3 ? (
@@ -127,8 +127,8 @@ function SideBar({
         </div>
         <div className="flex flex-col justify-center items-center ">
           <p className="mb-5 text-xs text-light-color font-semibold"> People</p>
-          <div className="  bg-white w-10 h-10 flex justify-center items-center rounded-full">
-            <TbPlus size={24} color="#905FF4" />
+          <div className=" bg-white w-10 h-10 flex justify-center items-center rounded-full">
+            <TbPlus size={24} color="#905FF4" onClick={togglePopup} />
           </div>
           {friends?.map((member, index) =>
             index === 1 ? (

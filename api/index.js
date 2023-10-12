@@ -44,18 +44,17 @@ const io = new Server(server, {
     origin: ["http://localhost:3000", "http://localhost:3001"],
   },
 });
-  const people = {};
+const people = {};
 
 io.on("connection", (socket) => {
   //! on work
 
-
-
-  socket.on('join-user', (userId) => {
+  socket.on("join-user", (userId) => {
     people[userId] = socket.id;
-    console.log(people);
+    //* USER IS ONLINE BROAD CAST TO ALL CONNECTED USERS
+    io.sockets.emit("online", userId);
   });
-  function getUserById(userId) {
+  const getUserById=(userId)=> {
     return people[userId] || null;
   }
   socket.on("join-chat", (data) => {
@@ -71,21 +70,40 @@ io.on("connection", (socket) => {
     setNotifications(newMessage.sender, newMessage.receiver);
   });
   socket.on("send-friend-request", async (data) => {
- 
-    const { senderId , receiverId  } = data;
-    // setNotifications(senderId, receiverId);
-    // setInvitations(senderId, receiverId);
+    const { senderId, receiverId } = data;
+
+    setNotifications(senderId, receiverId);
+    setInvitations(senderId, receiverId);
 
     const receiverSocketID = getUserById(receiverId);
     if (receiverSocketID !== null) {
-      console.log(`User ${receiverId} is online with socket ID: ${receiverSocketID}`);
+      console.log(
+        `User ${receiverId} is online with socket ID: ${receiverSocketID}`,
+      );
     } else {
       console.log(`User ${receiverId} is not found or offline.`);
     }
     socket.to(receiverSocketID).emit("receive-friend-request", data);
-  });
+    });
+  
 
-  socket.on("disconnect", () => {});
+  const getUserIdBySocketId=(socketId) =>{
+    for (const userId in people) {
+      if (people[userId] === socketId) {
+        return userId;
+      }
+    }
+    return null; 
+  }  
+  socket.on('disconnect', () => {
+    const userId = getUserIdBySocketId(socket.id);
+    if (userId) {
+      delete people[userId];
+      io.sockets.emit('offline', userId);
+    }
+    socket.disconnect(); // DISCONNECT SOCKET
+
+  });
 });
 
 // welcome message
@@ -109,8 +127,7 @@ app.get("/setnotif", (req, res) => {
 });
 app.get("/users", getUsers);
 
-// * routes chat*
-
+// * routes chat
 app.get("/friends/:userId", getFriends);
 app.post("/addfriend/:sender/:receiver", addFriend);
 app.get("/messages/:senderId/:receiverId", getMessages);

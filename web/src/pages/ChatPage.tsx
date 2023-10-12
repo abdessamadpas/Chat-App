@@ -9,7 +9,22 @@ import useGetNotification from '../hooks/useGetNotifications';
 import useDeleteNotification from '../hooks/useDeleteNotifications';
 import PopupModel from '../components/popup-model';
 import useGetUsers from '../hooks/useGetUsers';
-export const socket = io('http://localhost:1337');
+const host = 'http://localhost:1337';
+
+const queryParams = { userId: localStorage.getItem('userId') };
+export const socket = io(host);
+
+socket.once('connect', () => {
+  socket.on('online', (userId) => {
+    console.log(userId);
+    console.log(userId, 'Is Online!');
+  });
+
+  socket.on('offline', (userId) => {
+    console.log(userId);
+    console.log(userId, 'Is Offline!');
+  });
+});
 
 const ChatPage = () => {
   const userId = localStorage.getItem('userId');
@@ -40,9 +55,6 @@ const ChatPage = () => {
   const togglePopup = () => {
     setIsOpened(!isOpened);
   };
-  useEffect(() => {
-    console.log('isOpened', isOpened);
-  }, [isOpened]);
 
   //todo : get all  messages
 

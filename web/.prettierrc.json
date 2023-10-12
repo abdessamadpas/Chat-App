@@ -1,7 +1,5 @@
 {
   "plugins": ["prettier"],
-  "extends": ["plugin:prettier/recommended"],
   "semi": true,
-  "singleQuote": true,
-  "printWidth": 80
+  "singleQuote": true
 }

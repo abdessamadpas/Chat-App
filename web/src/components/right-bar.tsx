@@ -81,7 +81,7 @@ function RightBar() {
             <p className="font-semibold text-sm ">{username}</p>
           </div>
           <div className="flex flex-row justify-center items-center gap-1 ">
-            <MdNotificationsNone size={20} color="#C6C6C6" />
+            <MdNotificationsNone size={20} color="#C6C6C6" onClick={}/>
             <MdMoreVert size={20} color="#C6C6C6" />
           </div>
         </div>
