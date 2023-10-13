@@ -7,6 +7,7 @@
   ],
   "rules": {
     "semi": "warn",
-    "quotes": "warn"
+    "quotes": "warn",
+    "prettier/prettier": "off"
   }
 }

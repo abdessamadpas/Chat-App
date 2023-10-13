@@ -2,17 +2,21 @@ import React, { useEffect, useState } from 'react';
 import SideBar from '../components/side-bar';
 import ChatSection from '../components/chat-section';
 import RightBar from '../components/right-bar';
-import { userType, MessageTypes } from '../types';
+import { userType, MessageTypes, invitationType } from '../types';
 import io from 'socket.io-client';
 import useGetMessages from '../hooks/useGetMessages';
 import useGetNotification from '../hooks/useGetNotifications';
 import useDeleteNotification from '../hooks/useDeleteNotifications';
 import PopupModel from '../components/popup-model';
 import useGetUsers from '../hooks/useGetUsers';
+import useInvitations from '../hooks/useInvitaions';
 const host = 'http://localhost:1337';
 
-const queryParams = { userId: localStorage.getItem('userId') };
-export const socket = io(host);
+export const socket = io(host, {
+  transports: ['websocket'],
+  reconnection: false,
+  rejectUnauthorized: false,
+});
 
 socket.once('connect', () => {
   socket.on('online', (userId) => {
@@ -31,6 +35,7 @@ const ChatPage = () => {
   console.log('user connected is ', userId);
   const [chatId, setChatId] = useState<string>('');
   const [messages, setMessages] = useState<MessageTypes[]>([]);
+  const [invitations, setInvitations] = useState<invitationType[]>([]);
   const [receiver, setReceiver] = useState<userType | null>(null);
   const [unreadmessage, setUnreadmessage] = useState(new Map<string, number>());
   const { fetchMessages, errors } = useGetMessages();
@@ -39,6 +44,7 @@ const ChatPage = () => {
     notifications,
     isLoading,
   } = useGetNotification(userId as string);
+  const {fetchInvitations , errors : invitationErros}  = useInvitations()
   const deleteNotification = useDeleteNotification();
   const {
     users,
@@ -55,9 +61,17 @@ const ChatPage = () => {
   const togglePopup = () => {
     setIsOpened(!isOpened);
   };
+  // todo fetch invitations
+  useEffect(() => {
+    const fetchInvitationsAsync = async (userId: string) => {
+      const invitations = await fetchInvitations(userId);
+      if (!invitations) return;
+      setInvitations(invitations);
+    };
+    fetchInvitationsAsync(userId as string);
+  }, []);
 
   //todo : get all  messages
-
   useEffect(() => {
     console.log('fetching messages');
 
@@ -70,8 +84,8 @@ const ChatPage = () => {
     fetchingMessages();
   }, [unreadmessage]);
   useEffect(() => {
-    console.log(' messages', messages);
-  }, [messages]);
+    console.log(' invitations', invitations);
+  }, [invitations]);
 
   //todo : get all  notifications
   useEffect(() => {
@@ -119,9 +133,7 @@ const ChatPage = () => {
 
     const handleReceiveMessages = (newMessage: MessageTypes) => {
       setMessages((messages) => [...messages, newMessage]);
-      // check if he is the receiver
       if (receiver?._id === newMessage.sender) return;
-
       setUnreadmessage((prevMessages) => {
         const updateUnreadmessages = new Map(prevMessages);
 
@@ -136,8 +148,11 @@ const ChatPage = () => {
         return updateUnreadmessages;
       });
     };
-    const recieveInvitations = (data: any) => {
-      console.log('recieveInvitations', data);
+    const recieveInvitations = (newInvit: invitationType) => {
+      console.log('recieveInvitations', newInvit);
+      setInvitations((invitations)=>[
+        ...invitations, newInvit
+      ])
     };
     socket.on('receive-friend-request', recieveInvitations);
     socket.on('join-chat-req', handleJoinChat);
@@ -192,8 +207,7 @@ const ChatPage = () => {
         ) : (
           <div className=" flex-initial relative  w-4/5 my-5 rounded-2xl bg-white  h-[calc(100vh-<height-of-your-fixed-div>)]"></div>
         )}
-
-        <RightBar />
+        <RightBar invitations = {invitations}/>
       </div>
     </main>
   );

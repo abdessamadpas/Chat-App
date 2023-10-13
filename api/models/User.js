@@ -48,10 +48,13 @@ const UserSchema = new Schema(
       type: [
         {
           sender: String,
+          name : String,
           type: {
             type: String,
             enum: ["accept", "reject", "pending"],
+            default: "pending",
           },
+          time : { type : Date, default: Date.now },
         },
       ],
       default: [],

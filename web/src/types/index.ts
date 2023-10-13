@@ -12,3 +12,11 @@ export interface userType {
   email: string;
   image: string;
 }
+ export interface invitationType {
+  _id?: string;
+  name?: string;
+  sender?: string;
+  status?: string;
+  time?: string;
+ }
+ 

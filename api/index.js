@@ -18,6 +18,9 @@ const {
 const { getUsers } = require("./controller/getUsers");
 const { addFriend, getFriends } = require("./controller/inviteFriend");
 const setInvitations = require("./controller/invitations.js");
+const setFriend = require("./controller/setFriend.js");
+const changeInvitationStatus = require("./controller/changeInvitationStatus.js");
+const User = require("./models/User.js");
 
 const app = express();
 app.use(cors());
@@ -54,38 +57,54 @@ io.on("connection", (socket) => {
     //* USER IS ONLINE BROAD CAST TO ALL CONNECTED USERS
     io.sockets.emit("online", userId);
   });
-  const getUserById=(userId)=> {
+
+  const getUserSocketId=(userId)=> {
     return people[userId] || null;
   }
+
   socket.on("join-chat", (data) => {
     socket.join(data.chatId);
     io.emit("join-chat-req", data);
   });
+
   socket.on("join-req-accept", (chatId) => {
     socket.join(chatId);
   });
+
   socket.on("send-message", async (newMessage) => {
     socket.to(newMessage.chatId).emit("receive-message", newMessage);
     saveMessageOnDB(newMessage);
     setNotifications(newMessage.sender, newMessage.receiver);
   });
+  
   socket.on("send-friend-request", async (data) => {
     const { senderId, receiverId } = data;
 
     setNotifications(senderId, receiverId);
     setInvitations(senderId, receiverId);
 
-    const receiverSocketID = getUserById(receiverId);
-    if (receiverSocketID !== null) {
-      console.log(
-        `User ${receiverId} is online with socket ID: ${receiverSocketID}`,
-      );
-    } else {
-      console.log(`User ${receiverId} is not found or offline.`);
-    }
-    socket.to(receiverSocketID).emit("receive-friend-request", data);
+    const receiverSocketID = getUserSocketId(receiverId);
+    const senderInfo  = await User.findById(senderId);
+    socket.to(receiverSocketID).emit("receive-friend-request", 
+      { name : senderInfo.username,
+        senderId : senderId,
+        status : "pending"
+      });
     });
-  
+    
+
+  socket.on("send-friend-request-status", async (data) => {
+    const { userId, status } = data;
+    if (status === "accepted") {
+      // change the status of the invitation and add the user to the friends list
+      setFriend(userId,friendId);
+    }
+    if (status === "rejected") {
+      // just change the status of the invitation
+      changeInvitationStatus(userId, friendId, status);
+    }
+    const receiverSocketID = getUserById(receiverId);
+  });
 
   const getUserIdBySocketId=(socketId) =>{
     for (const userId in people) {
@@ -101,7 +120,7 @@ io.on("connection", (socket) => {
       delete people[userId];
       io.sockets.emit('offline', userId);
     }
-    socket.disconnect(); // DISCONNECT SOCKET
+    socket.disconnect();
 
   });
 });
@@ -134,5 +153,6 @@ app.get("/messages/:senderId/:receiverId", getMessages);
 app.delete("/messages/:userId", clearChat);
 app.get("/notifications/:id", getNotifications);
 app.delete("/notifications", deleteNotification);
+app.get("/invitations/:userId", changeInvitationStatus.getInvitation );
 
 module.exports = app;

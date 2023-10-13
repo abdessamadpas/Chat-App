@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   MdNotificationsNone,
   MdOutlineExpandMore,
   MdMoreVert,
+  MdOutlineSettings
 } from 'react-icons/md';
+import NotificationPopup from './notification-popup';
+import { invitationType } from '../types';
 const attachments = [
   {
     name: 'Very important file.pdf',
@@ -63,8 +66,23 @@ const members = [
       'https://www.creative-tim.com/learning-lab/tailwind-starter-kit/img/team-2-800x800.jpg',
   },
 ];
-function RightBar() {
+interface RightBarProps {
+  // openPopup: () => void;
+  invitations : invitationType[]
+}
+function RightBar({invitations}:RightBarProps) {
   const username = localStorage.getItem('username');
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
+
+  const openPopup = () => {
+    setShowPopup(true);
+  };
+
+  const closePopup = () => {
+    setShowPopup(false);
+  };
+
   return (
     <div className="hidden  lg:block    h-screen overflow-y-auto overflow-x-hidden  w-96  ">
       <div className="   py-16 px-5   ">
@@ -81,10 +99,17 @@ function RightBar() {
             <p className="font-semibold text-sm ">{username}</p>
           </div>
           <div className="flex flex-row justify-center items-center gap-1 ">
-            <MdNotificationsNone size={20} color="#C6C6C6" onClick={}/>
+            <MdNotificationsNone
+              size={20}
+              color="#C6C6C6"
+              onClick={openPopup}
+            />
             <MdMoreVert size={20} color="#C6C6C6" />
           </div>
         </div>
+        {showPopup && (
+          <NotificationPopup openPopup = {openPopup} invitations = {invitations}/>
+      )}
         {/* 2 */}
         <div className="mt-10">
           <div className="flex justify-between items-center">
