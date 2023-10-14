@@ -1,35 +1,66 @@
 const User = require("../models/User");
 const mongoose = require("mongoose");
-const setInvitations = async ( senderId, receiverId) => {
-  const sender = await User.findById(senderId);
-  const receiver = await User.findById(receiverId);
-  const checkInvitation = receiver.invitations.find(
-    (invitation) => invitation.sender === senderId,
-  )
-  console.log("check invit : ", checkInvitation);
-  const idGenerated = new mongoose.Types.ObjectId();
-  if (!sender) {
-    console.log("ur not a user 🍳");
+
+const setInvitations = async (senderId, receiverId) => {
+  try {
+    const sender = await User.findById(senderId);
+    const receiver = await User.findById(receiverId);
+
+    if (!sender) {
+      throw new Error("Sender is not a user 🍳");
+    }
+    if (!receiver) {
+      throw new Error("Receiver is not a user 🍳");
+    }
+
+    const checkInvitationInReceiver = receiver.invitations.find(
+      (invitation) => invitation.sender === senderId
+    );
+    const checkInvitationInSender = sender.invitations.find(
+      (invitation) => invitation.sender === senderId
+    );
+
+    if (checkInvitationInReceiver || checkInvitationInSender) {
+      throw new Error("You already sent an invitation to this user 🍳");
+    }
+
+    const idGenerated = new mongoose.Types.ObjectId();
+
+    await User.updateOne(
+      { _id: receiverId },
+      {
+        $push: {
+          invitations: {
+            id: idGenerated,
+            sender: senderId,
+            status: "receive",
+            type: "pending",
+            name: sender.username,
+          },
+        },
+      }
+    );
+
+    await User.updateOne(
+      { _id: senderId },
+      {
+        $push: {
+          invitations: {
+            id: idGenerated,
+            sender: senderId,
+            status: "send",
+            type: "pending",
+            name: sender.username,
+          },
+        },
+      }
+    );
+
+    console.log("Invitation sent successfully");
+  } catch (error) {
+    console.error(error.message);
+    // You can choose to return an error response or handle it according to your application's requirements.
   }
-  if (!receiver) {
-    console.log("this user is not a user 🍳");
-  }
-  if (checkInvitation) {
-    console.log("you already sent an invitation to this user 🍳");
-  }
-  await User.updateOne(
-    { _id: receiverId },
-    {
-      $push: {
-        invitations: { id: idGenerated, sender: senderId, type: "pending", name :  sender.username},
-      },
-    },
-  )
-    .then((res) => console.log("invitation sent successfully", res))
-    .catch((err) => console.log(err));
-  // res.status(201).json({message:'invitation sent successfully'});
 };
-
-
 
 module.exports = setInvitations;

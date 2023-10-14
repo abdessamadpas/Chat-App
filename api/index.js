@@ -19,7 +19,7 @@ const { getUsers } = require("./controller/getUsers");
 const { addFriend, getFriends } = require("./controller/inviteFriend");
 const setInvitations = require("./controller/invitations.js");
 const setFriend = require("./controller/setFriend.js");
-const changeInvitationStatus = require("./controller/changeInvitationStatus.js");
+const {changeInvitationStatus, getInvitation} = require("./controller/changeInvitationStatus.js");
 const User = require("./models/User.js");
 
 const app = express();
@@ -94,16 +94,18 @@ io.on("connection", (socket) => {
     
 
   socket.on("send-friend-request-status", async (data) => {
-    const { userId, status } = data;
-    if (status === "accepted") {
+    const { userId, status,  friendId} = data;
+    
+    if (status === "accept") {
       // change the status of the invitation and add the user to the friends list
       setFriend(userId,friendId);
+      // changeInvitationStatus(userId, friendId, status);
+
     }
-    if (status === "rejected") {
+    if (status === "reject") {
       // just change the status of the invitation
       changeInvitationStatus(userId, friendId, status);
     }
-    const receiverSocketID = getUserById(receiverId);
   });
 
   const getUserIdBySocketId=(socketId) =>{
@@ -153,6 +155,6 @@ app.get("/messages/:senderId/:receiverId", getMessages);
 app.delete("/messages/:userId", clearChat);
 app.get("/notifications/:id", getNotifications);
 app.delete("/notifications", deleteNotification);
-app.get("/invitations/:userId", changeInvitationStatus.getInvitation );
+app.get("/invitations/:userId", getInvitation );
 
 module.exports = app;

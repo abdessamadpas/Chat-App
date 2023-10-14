@@ -29,9 +29,9 @@ socket.once('connect', () => {
     console.log(userId, 'Is Offline!');
   });
 });
+ export const userId = localStorage.getItem('userId');
 
 const ChatPage = () => {
-  const userId = localStorage.getItem('userId');
   console.log('user connected is ', userId);
   const [chatId, setChatId] = useState<string>('');
   const [messages, setMessages] = useState<MessageTypes[]>([]);
@@ -64,7 +64,7 @@ const ChatPage = () => {
   // todo fetch invitations
   useEffect(() => {
     const fetchInvitationsAsync = async (userId: string) => {
-      const invitations = await fetchInvitations(userId);
+      const invitations = await fetchInvitations(userId, "receive");
       if (!invitations) return;
       setInvitations(invitations);
     };
@@ -148,13 +148,13 @@ const ChatPage = () => {
         return updateUnreadmessages;
       });
     };
-    const recieveInvitations = (newInvit: invitationType) => {
-      console.log('recieveInvitations', newInvit);
+    const receiveInvitations = (newInvit: invitationType) => {
+      console.log('receiveInvitations', newInvit);
       setInvitations((invitations)=>[
         ...invitations, newInvit
       ])
     };
-    socket.on('receive-friend-request', recieveInvitations);
+    socket.on('receive-friend-request', receiveInvitations);
     socket.on('join-chat-req', handleJoinChat);
     socket.on('receive-message', handleReceiveMessages);
 
@@ -167,17 +167,6 @@ const ChatPage = () => {
     };
   }, [receiver]);
 
-  useEffect(() => {
-    const recieveInvitations = (data: any) => {
-      console.log('receiveInvitations', data);
-      // Handle the friend request here
-    };
-    socket.on('receive-friend-request', recieveInvitations);
-
-    return () => {
-      socket.off('receive-friend-request');
-    };
-  }, []);
 
   return (
     <main className="w-full  h-screen   overflow-hidden   bg-gray-100 ">
@@ -195,6 +184,8 @@ const ChatPage = () => {
             isOpen={isOpened}
             users={users}
             userId={userId as string}
+            invitations={invitations}
+            setInvitations={setInvitations}
           />
         ) : null}
         {receiver ? (

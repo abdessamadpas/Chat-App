@@ -49,11 +49,17 @@ const UserSchema = new Schema(
         {
           sender: String,
           name : String,
+          status : {
+            type: String,
+            enum: ["send", "receive",],
+            default: "send",
+          },
           type: {
             type: String,
             enum: ["accept", "reject", "pending"],
             default: "pending",
           },
+          
           time : { type : Date, default: Date.now },
         },
       ],
@@ -68,5 +74,4 @@ const UserSchema = new Schema(
 );
 
 const User = mongoose.model("User", UserSchema);
-
 module.exports = User;

@@ -76,12 +76,10 @@ function RightBar({invitations}:RightBarProps) {
   const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
 
   const openPopup = () => {
-    setShowPopup(true);
+    setShowPopup(!showPopup);
   };
 
-  const closePopup = () => {
-    setShowPopup(false);
-  };
+
 
   return (
     <div className="hidden  lg:block    h-screen overflow-y-auto overflow-x-hidden  w-96  ">

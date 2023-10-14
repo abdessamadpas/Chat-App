@@ -1,9 +1,10 @@
 import { userType } from '../types';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
+const userId = localStorage.getItem('userId')
 const useGetUsers = () => {
   const [users, setUsers] = useState<userType[]>([]);
+
   const [errors, setErrors] = useState<unknown>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const token = localStorage.getItem('token') || '';
@@ -15,14 +16,19 @@ const useGetUsers = () => {
           Authorization: `Basic ${token}`,
         },
       });
-
-      setUsers(res.data.data);
+  
+      const users = res.data.data
+        .map((user: userType) => user)
+        .filter((user:userType) => user._id !== userId);
+  
+      setUsers(users);
       setIsLoading(false);
     } catch (err) {
       console.log(err);
       setErrors(err);
     }
   };
+  
   useEffect(() => {
     if (token) {
       fetchUsers();

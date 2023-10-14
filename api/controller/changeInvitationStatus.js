@@ -1,6 +1,7 @@
 const User = require("../models/User");
 
-const changeInvitationStatus = async (userId, friendId) => {
+const changeInvitationStatus = async (userId, friendId, status) => {
+  console.log("change status function");
   const sender = await User.findById(userId);
   const receiver = await User.findById(friendId);
   const existingInvitation = sender.invitations.find(
@@ -10,22 +11,25 @@ const changeInvitationStatus = async (userId, friendId) => {
   if (!existingInvitation) {
     return { error: "there is no invitation to this user" };
   }
+
   if (!sender) {
     return res.status(400).json({ message: "sender not existed 🩹"});
   }
+
   if (!receiver) {
     return res.status(400).json({ message: "ur friend not existed 🍳"});
   }
-  existingInvitation.type = "reject";
+
+  existingInvitation.type = status;
     await sender.save();
-    return { success: "Friend request sent and accepted" };
+    return { success: " invitation change status " };
 };
 
 const getInvitation = async (req, res)=>{
 
     const userId = req.params.userId;
     if(!userId){
-        return res.status(400).json({ message: "user id is required" });
+        return res.status(400).json({ message: " user id is required " });
     }
     const user = await User.findById(userId);
 

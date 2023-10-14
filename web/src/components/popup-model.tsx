@@ -1,5 +1,5 @@
-import React from 'react';
-import { userType } from '../types';
+import React, { useEffect } from 'react';
+import { invitationType, userType } from '../types';
 import e from 'express';
 import useRequestFriend from '../hooks/useRequestFriend';
 import { socket } from '../pages/ChatPage';
@@ -9,23 +9,41 @@ interface PopupProps {
   togglePopup: () => void;
   users: userType[];
   userId: string;
+  invitations : invitationType[];
+  setInvitations : React.Dispatch<React.SetStateAction<invitationType[]>>;
 }
 
-function PopupModel({ togglePopup, isOpen, users, userId }: PopupProps) {
+function PopupModel({ togglePopup, isOpen, users, userId, invitations, setInvitations }: PopupProps) {
   // const {requestFriend } = useRequestFriend();
-  const [search, setSearch] = React.useState<Array<userType>>(users);
+  const [usersInvited, setUsersInvited] = React.useState<invitationType[]>(invitations);
+  const [search, setSearch] = React.useState<Array<userType>>();
+console.log('search',search );
+
+
+
+
+  const filtredUsers = users.map((user) =>
+  usersInvited.find((invitation) => invitation.sender === user._id )
+  ? { ...user, isInvited: true }
+  :  { ...user, isInvited: false }
+  );
+
+  useEffect(() => {
+    setSearch(filtredUsers);
+  } , [ usersInvited])
 
   const filterUsers = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value;
     if (keyword !== '') {
-      const results = users.filter((user) => {
+      const results = filtredUsers.filter((user) => {
         return user.username.toLowerCase().startsWith(keyword.toLowerCase());
       });
       setSearch(results);
     } else {
-      setSearch(users);
+      setSearch(filtredUsers);
     }
   };
+
   const addFriend = (member: userType) => {
     socket.emit('send-friend-request', {
       senderId: userId,
@@ -60,35 +78,46 @@ function PopupModel({ togglePopup, isOpen, users, userId }: PopupProps) {
           </div>
           <div className="w-full h-52 overflow-auto ">
             <div className=" flex flex-col gap-6">
-              {search.map((member, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 overflow-hidden rounded-full ">
-                      <img
-                        src={member.image}
-                        alt="..."
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <p className=" font-semibold text-sm">
-                        {member.username}
-                      </p>
-                      <p className=" font-extralight text-xs text-gray-400">
-                        {member.email}
-                      </p>
-                    </div>
+            {search?.map((member, index) => (
+              <div key={index} className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 overflow-hidden rounded-full">
+                    <img
+                      src={member.image}
+                      alt="..."
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <div className="">
-                    <button
-                      className="bg-purple-500 text-white p-2 rounded-lg"
-                      onClick={() => addFriend(member)}
-                    >
-                      Add
-                    </button>
+                  <div>
+                    <p className="font-semibold text-sm">{member.username}</p>
+                    <p className="font-extralight text-xs text-gray-400">
+                      {member.email}
+                    </p>
                   </div>
                 </div>
-              ))}
+              {  !member.isInvited ?
+                <div className="">
+                  <button
+                    className="bg-purple-500 text-white p-2 rounded-lg"
+                    onClick={() => {
+                      console.log("member :", member);
+                      console.log("Button Text:", member.isInvited ? 'Invited' : 'Add');
+                      addFriend(member);
+                      setUsersInvited((invitations)=>[
+                        ...invitations, {sender: userId, receiver: member._id},
+                        {sender: member._id, receiver: userId}
+                      ])
+
+                    }}
+                  >
+                    Add
+                  </button>
+                </div> : <p> already invited</p>}
+
+                
+              </div>
+            ))}
+
             </div>
           </div>
         </div>

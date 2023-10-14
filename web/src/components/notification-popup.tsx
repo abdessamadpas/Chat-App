@@ -1,16 +1,32 @@
 import React from 'react';
+import {userId} from '../pages/ChatPage'
 import {
   MdCheck,
   MdClose,
   MdOutlineSettings
 } from 'react-icons/md';
 import { invitationType } from '../types';
+import { socket } from '../pages/ChatPage';
 interface PopupProps {
   openPopup: () => void;
   invitations : invitationType[]
-
 }
 function NotificationPopup({openPopup, invitations}:PopupProps) {
+  console.log("invitations" , invitations);
+
+  const acceptFriend = ( invitation : invitationType) => {
+    socket.emit('send-friend-request-status', {
+      status: 'accept',
+      userId :  userId,
+      friendId : invitation.sender
+  })};
+  const rejectFriend = (invitation : invitationType) => {
+    socket.emit('send-friend-request-status', {
+      status: 'reject',
+      userId :  userId,
+      friendId : invitation.sender
+  })
+  };
   return  <div className=" bg-white p-2 rounded-xl border shadow-md absolute w-96 right-5  " >
   <div className='flex flex-row justify-between items-center'>
     <p className="text-sm font-medium text-gray-950 py-2 px-1">Recent Notification</p>
@@ -28,7 +44,6 @@ function NotificationPopup({openPopup, invitations}:PopupProps) {
   <div className='h-96 overflow-auto'>
     {
       invitations.map((invitation, index) => 
-   
     <div className=' flex flex-row justify-between items-center'>
       <div className='px-2 py-3 flex flex-row justify-start items-center gap-2' >
         <div className="w-10 h-10 overflow-hidden rounded-xl ">
@@ -49,14 +64,14 @@ function NotificationPopup({openPopup, invitations}:PopupProps) {
           <MdCheck
             size={20}
             color="red"
-            onClick={openPopup}
+            onClick={()=>acceptFriend(invitation)}
           />
         </div>
         <div className="  bg-purple-400 w-8 h-8 flex justify-center items-center rounded-full">
           <MdClose
             size={20}
             color="white"
-            onClick={openPopup}
+            onClick={()=>rejectFriend(invitation)}
           />
         </div>
       </div>

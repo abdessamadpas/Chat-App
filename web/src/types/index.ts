@@ -11,6 +11,7 @@ export interface userType {
   username: string;
   email: string;
   image: string;
+  isInvited ?: boolean;
 }
  export interface invitationType {
   _id?: string;
