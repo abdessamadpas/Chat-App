@@ -1,4 +1,3 @@
-import React from 'react';
 import {userId} from '../pages/ChatPage'
 import {
   MdCheck,
@@ -9,24 +8,35 @@ import { invitationType } from '../types';
 import { socket } from '../pages/ChatPage';
 interface PopupProps {
   openPopup: () => void;
-  invitations : invitationType[]
+  invitations : invitationType[];
+  setInvitations : React.Dispatch<React.SetStateAction<invitationType[]>>
 }
-function NotificationPopup({openPopup, invitations}:PopupProps) {
+function NotificationPopup({openPopup, invitations,setInvitations}:PopupProps) {
   console.log("invitations" , invitations);
+  
+  const pendingInvitations = invitations.filter(
+    (invitation) => invitation.status === 'pending'
+  );
 
-  const acceptFriend = ( invitation : invitationType) => {
+  const acceptFriend = ( invitation : any) => {
     socket.emit('send-friend-request-status', {
       status: 'accept',
       userId :  userId,
-      friendId : invitation.sender
-  })};
-  const rejectFriend = (invitation : invitationType) => {
+      friendId : invitation.senderId
+    }, )
+    // remove invitation
+    setInvitations(invitations.filter( (invit)=> invit != invitation))
+
+
+ };
+
+  const rejectFriend = (invitation : any) => {
     socket.emit('send-friend-request-status', {
       status: 'reject',
       userId :  userId,
-      friendId : invitation.sender
-  })
-  };
+      friendId : invitation.senderId      ,
+  })};
+  
   return  <div className=" bg-white p-2 rounded-xl border shadow-md absolute w-96 right-5  " >
   <div className='flex flex-row justify-between items-center'>
     <p className="text-sm font-medium text-gray-950 py-2 px-1">Recent Notification</p>
@@ -43,7 +53,7 @@ function NotificationPopup({openPopup, invitations}:PopupProps) {
 
   <div className='h-96 overflow-auto'>
     {
-      invitations.map((invitation, index) => 
+      pendingInvitations.map((invitation, index) => 
     <div className=' flex flex-row justify-between items-center'>
       <div className='px-2 py-3 flex flex-row justify-start items-center gap-2' >
         <div className="w-10 h-10 overflow-hidden rounded-xl ">
@@ -64,7 +74,10 @@ function NotificationPopup({openPopup, invitations}:PopupProps) {
           <MdCheck
             size={20}
             color="red"
-            onClick={()=>acceptFriend(invitation)}
+            onClick={()=>{
+              console.log("invitation", invitation);
+              
+              acceptFriend(invitation)}}
           />
         </div>
         <div className="  bg-purple-400 w-8 h-8 flex justify-center items-center rounded-full">

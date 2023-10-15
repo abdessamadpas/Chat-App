@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
   socket.on("join-user", (userId) => {
     people[userId] = socket.id;
     //* USER IS ONLINE BROAD CAST TO ALL CONNECTED USERS
-    io.sockets.emit("online", userId);
+    io.sockets.emit("online", people);
   });
 
   const getUserSocketId=(userId)=> {
@@ -85,6 +85,7 @@ io.on("connection", (socket) => {
 
     const receiverSocketID = getUserSocketId(receiverId);
     const senderInfo  = await User.findById(senderId);
+
     socket.to(receiverSocketID).emit("receive-friend-request", 
       { name : senderInfo.username,
         senderId : senderId,
@@ -99,8 +100,6 @@ io.on("connection", (socket) => {
     if (status === "accept") {
       // change the status of the invitation and add the user to the friends list
       setFriend(userId,friendId);
-      // changeInvitationStatus(userId, friendId, status);
-
     }
     if (status === "reject") {
       // just change the status of the invitation
@@ -120,7 +119,7 @@ io.on("connection", (socket) => {
     const userId = getUserIdBySocketId(socket.id);
     if (userId) {
       delete people[userId];
-      io.sockets.emit('offline', userId);
+      io.sockets.emit('offline', people);
     }
     socket.disconnect();
 

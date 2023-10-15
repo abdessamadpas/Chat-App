@@ -68,9 +68,10 @@ const members = [
 ];
 interface RightBarProps {
   // openPopup: () => void;
-  invitations : invitationType[]
+  invitations : invitationType[];
+  setInvitations : React.Dispatch<React.SetStateAction<invitationType[]>>
 }
-function RightBar({invitations}:RightBarProps) {
+function RightBar({invitations,setInvitations}:RightBarProps) {
   const username = localStorage.getItem('username');
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
@@ -97,16 +98,22 @@ function RightBar({invitations}:RightBarProps) {
             <p className="font-semibold text-sm ">{username}</p>
           </div>
           <div className="flex flex-row justify-center items-center gap-1 ">
-            <MdNotificationsNone
+            <div className='relative'>
+               <MdNotificationsNone
               size={20}
               color="#C6C6C6"
               onClick={openPopup}
             />
+            <div className="absolute   -top-0.5 -right-0.5 flex justify-center items-center ">
+                    <div className="relative w-2 h-2 bg-purple-600 rounded-full  "></div>
+                  </div>
+            </div>
+           
             <MdMoreVert size={20} color="#C6C6C6" />
           </div>
         </div>
         {showPopup && (
-          <NotificationPopup openPopup = {openPopup} invitations = {invitations}/>
+          <NotificationPopup openPopup = {openPopup} invitations = {invitations} setInvitations={setInvitations}/>
       )}
         {/* 2 */}
         <div className="mt-10">

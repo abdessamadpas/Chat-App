@@ -18,26 +18,18 @@ export const socket = io(host, {
   rejectUnauthorized: false,
 });
 
-socket.once('connect', () => {
-  socket.on('online', (userId) => {
-    console.log(userId);
-    console.log(userId, 'Is Online!');
-  });
 
-  socket.on('offline', (userId) => {
-    console.log(userId);
-    console.log(userId, 'Is Offline!');
-  });
-});
  export const userId = localStorage.getItem('userId');
 
 const ChatPage = () => {
+
   console.log('user connected is ', userId);
   const [chatId, setChatId] = useState<string>('');
   const [messages, setMessages] = useState<MessageTypes[]>([]);
   const [invitations, setInvitations] = useState<invitationType[]>([]);
   const [receiver, setReceiver] = useState<userType | null>(null);
   const [unreadmessage, setUnreadmessage] = useState(new Map<string, number>());
+  const [onlineFriends, setOnlineFriends] = useState({});
   const { fetchMessages, errors } = useGetMessages();
   const {
     errors: notifsErrors,
@@ -72,17 +64,17 @@ const ChatPage = () => {
   }, []);
 
   //todo : get all  messages
-  useEffect(() => {
-    console.log('fetching messages');
+  // useEffect(() => {
+  //   console.log('fetching messages');
 
-    const fetchingMessages = async () => {
-      const fetchedMessages = await fetchMessages(userId, receiver?._id);
-      fetchedMessages
-        ? setMessages([...fetchedMessages])
-        : console.log('fetching messages failed', errors);
-    };
-    fetchingMessages();
-  }, [unreadmessage]);
+  //   const fetchingMessages = async () => {
+  //     const fetchedMessages = await fetchMessages(userId, receiver?._id);
+  //     fetchedMessages
+  //       ? setMessages([...fetchedMessages])
+  //       : console.log('fetching messages failed', errors);
+  //   };
+  //   fetchingMessages();
+  // }, [unreadmessage]);
   useEffect(() => {
     console.log(' invitations', invitations);
   }, [invitations]);
@@ -101,6 +93,17 @@ const ChatPage = () => {
     const generatedChatId = [receiver._id, userId].sort().join('-');
     setChatId(generatedChatId);
     setReceiver(receiver);
+
+    const fetchingMessages = async () => {
+      setMessages([])
+      const fetchedMessages = await fetchMessages(userId, receiver?._id);
+      console.log("rhe errror is",fetchedMessages);
+      
+      fetchedMessages
+        ? setMessages([...fetchedMessages])
+        : console.log('fetching messages failed', errors);
+    };
+    fetchingMessages();
 
     //! delete unread message from unreadmessage map
     //todo : create a new map and delete the unread message from it for Immutability and State Consistency 🤟🏿
@@ -167,16 +170,54 @@ const ChatPage = () => {
     };
   }, [receiver]);
 
+  // socket.once('connect', () => {
+  //   socket.on('online', (userId) => {
+  //     console.log(userId, 'Is Online!');
+  //     if (!onlineFriends.includes(userId)) {
+  //       setOnlineFriends((onlineFriends) => [...onlineFriends, userId]);
+  //     }
 
+  //   });
+  
+  //   socket.on('offline', (userId) => {
+  //     setOnlineFriends((onlineFriends) => onlineFriends.filter((id) => id !== userId));
+  //     console.log(userId, 'Is Offline!');
+  //   });
+  // });
+  useEffect(() => {
+    const handleOnline = (onlines:any) => {
+      console.log(userId, 'Is Online!');
+     
+        setOnlineFriends( onlines);
+      
+    };
+  
+    const handleOffline = (onlines:any) => {
+      setOnlineFriends(onlines);
+      console.log(userId, 'Is Offline!');
+    };
+  
+    socket.on('online', handleOnline);
+    socket.on('offline', handleOffline);
+  
+    // Clean up the event listeners when the component unmounts
+    return () => {
+      socket.off('online', handleOnline);
+      socket.off('offline', handleOffline);
+    };
+  }, [onlineFriends]); // Make sure to include onlineFriends as a dependency
+  
   return (
     <main className="w-full  h-screen   overflow-hidden   bg-gray-100 ">
       <div className="flex flex-row  ">
         <SideBar
           selectReceiver={selectReceiver}
-          receiverId={receiver?._id}
-          isOpened={isOpened}
           togglePopup={togglePopup}
           user={userId}
+          notifications={notifications}
+          onlineFriends={onlineFriends}
+          invitations = {invitations}
+
         />
         {isOpened ? (
           <PopupModel
@@ -198,7 +239,10 @@ const ChatPage = () => {
         ) : (
           <div className=" flex-initial relative  w-4/5 my-5 rounded-2xl bg-white  h-[calc(100vh-<height-of-your-fixed-div>)]"></div>
         )}
-        <RightBar invitations = {invitations}/>
+        <RightBar 
+          invitations = {invitations}
+          setInvitations = {setInvitations}
+          />
       </div>
     </main>
   );

@@ -5,7 +5,8 @@ const setInvitations = async (senderId, receiverId) => {
   try {
     const sender = await User.findById(senderId);
     const receiver = await User.findById(receiverId);
-
+    console.log("senderId", senderId);
+    console.log("receiver",receiver.invitations);
     if (!sender) {
       throw new Error("Sender is not a user 🍳");
     }
@@ -16,16 +17,13 @@ const setInvitations = async (senderId, receiverId) => {
     const checkInvitationInReceiver = receiver.invitations.find(
       (invitation) => invitation.sender === senderId
     );
-    const checkInvitationInSender = sender.invitations.find(
-      (invitation) => invitation.sender === senderId
-    );
-
-    if (checkInvitationInReceiver || checkInvitationInSender) {
-      throw new Error("You already sent an invitation to this user 🍳");
+   
+    
+    if (checkInvitationInReceiver ) {
+      throw new Error("You already  receive an invitation to this user  🍳");
     }
-
     const idGenerated = new mongoose.Types.ObjectId();
-
+    
     await User.updateOne(
       { _id: receiverId },
       {
