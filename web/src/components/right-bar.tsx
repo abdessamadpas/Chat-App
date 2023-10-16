@@ -7,65 +7,8 @@ import {
 } from 'react-icons/md';
 import NotificationPopup from './notification-popup';
 import { invitationType } from '../types';
-const attachments = [
-  {
-    name: 'Very important file.pdf',
-    type: 'pdf',
-    size: '7.6',
-    date: '31/10/23, 11:15 AM',
-  },
-  {
-    name: 'Very important file.doc',
-    type: 'doc',
+import {members, attachments} from '../constants/index'
 
-    size: '7.6',
-    date: '31/10/23, 11:15 AM',
-  },
-  {
-    name: 'Very important file.txt',
-    type: 'txt',
-
-    size: '7.6',
-    date: '31/10/23, 11:15 AM',
-  },
-  {
-    name: 'Very important file.pdf',
-    type: 'pdf',
-
-    size: '7.6',
-    date: '31/10/23, 11:15 AM',
-  },
-];
-const members = [
-  {
-    name: 'Abdessamad pas',
-    date: 'last seen recently',
-    leader: true,
-    image:
-      'https://images.unsplash.com/photo-1557002665-c552e1832483?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
-  },
-  {
-    name: 'Zakaria elhajri',
-    date: 'last seen recently',
-    leader: false,
-    image:
-      'https://images.unsplash.com/photo-1607081692245-419edffb5462?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
-  },
-  {
-    name: 'Chaymae Loukili',
-    date: 'last seen recently',
-    leader: false,
-    image:
-      'https://images.unsplash.com/photo-1612000529646-f424a2aa1bff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-  },
-  {
-    name: 'Oumaima chi la3ba',
-    date: 'last seen recently',
-    leader: false,
-    image:
-      'https://www.creative-tim.com/learning-lab/tailwind-starter-kit/img/team-2-800x800.jpg',
-  },
-];
 interface RightBarProps {
   // openPopup: () => void;
   invitations : invitationType[];
@@ -75,7 +18,9 @@ function RightBar({invitations,setInvitations}:RightBarProps) {
   const username = localStorage.getItem('username');
   const [showPopup, setShowPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
-
+  const pendingInvitations = invitations.filter(
+    (invitation) => invitation.status === 'pending'
+  );
   const openPopup = () => {
     setShowPopup(!showPopup);
   };
@@ -104,12 +49,12 @@ function RightBar({invitations,setInvitations}:RightBarProps) {
               color="#C6C6C6"
               onClick={openPopup}
             />
-            <div className="absolute   -top-0.5 -right-0.5 flex justify-center items-center ">
-                    <div className="relative w-2 h-2 bg-purple-600 rounded-full  "></div>
-                  </div>
+            {pendingInvitations.length > 0 && (
+              <div className="absolute   -top-0.5 -right-0.5 flex justify-center items-center ">
+                <div className="relative w-2 h-2 bg-purple-600 rounded-full  "></div>
+              </div>)}
             </div>
-           
-            <MdMoreVert size={20} color="#C6C6C6" />
+              <MdMoreVert size={20} color="#C6C6C6" />
           </div>
         </div>
         {showPopup && (

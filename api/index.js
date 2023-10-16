@@ -74,13 +74,13 @@ io.on("connection", (socket) => {
   socket.on("send-message", async (newMessage) => {
     socket.to(newMessage.chatId).emit("receive-message", newMessage);
     saveMessageOnDB(newMessage);
-    setNotifications(newMessage.sender, newMessage.receiver);
+    setNotifications(newMessage.sender, newMessage.receiver, "message");
   });
   
   socket.on("send-friend-request", async (data) => {
     const { senderId, receiverId } = data;
 
-    setNotifications(senderId, receiverId);
+    setNotifications(senderId, receiverId, "requestFriend");
     setInvitations(senderId, receiverId);
 
     const receiverSocketID = getUserSocketId(receiverId);

@@ -29,12 +29,13 @@ const ChatPage = () => {
   const [invitations, setInvitations] = useState<invitationType[]>([]);
   const [receiver, setReceiver] = useState<userType | null>(null);
   const [unreadmessage, setUnreadmessage] = useState(new Map<string, number>());
+  
   const [onlineFriends, setOnlineFriends] = useState({});
   const { fetchMessages, errors } = useGetMessages();
   const {
     errors: notifsErrors,
     notifications,
-    isLoading,
+    isLoading : isLoadingNotifications,
   } = useGetNotification(userId as string);
   const {fetchInvitations , errors : invitationErros}  = useInvitations()
   const deleteNotification = useDeleteNotification();
@@ -63,29 +64,22 @@ const ChatPage = () => {
     fetchInvitationsAsync(userId as string);
   }, []);
 
-  //todo : get all  messages
-  // useEffect(() => {
-  //   console.log('fetching messages');
 
-  //   const fetchingMessages = async () => {
-  //     const fetchedMessages = await fetchMessages(userId, receiver?._id);
-  //     fetchedMessages
-  //       ? setMessages([...fetchedMessages])
-  //       : console.log('fetching messages failed', errors);
-  //   };
-  //   fetchingMessages();
-  // }, [unreadmessage]);
   useEffect(() => {
     console.log(' invitations', invitations);
   }, [invitations]);
 
+//! working hereeeeeeeeeeeeeeeeeeeeeeeeee
   //todo : get all  notifications
   useEffect(() => {
-    notifications &&
-      setUnreadmessage(
-        new Map(notifications.map((notify) => [notify.sender, notify.count])),
-      );
-  }, [isLoading]);
+    if (notifications) {
+      const newNotif = notifications.filter(notify => notify?.type === 'message');
+      setUnreadmessage(new Map(newNotif.map((notify) => [notify.sender?? '', notify.count?? 0])));
+    }else(
+      setUnreadmessage(new Map())
+    
+    )
+  }, [isLoadingNotifications]);
 
   const selectReceiver = async (receiver: userType) => {
     console.log('receiver is ', receiver);
@@ -170,25 +164,11 @@ const ChatPage = () => {
     };
   }, [receiver]);
 
-  // socket.once('connect', () => {
-  //   socket.on('online', (userId) => {
-  //     console.log(userId, 'Is Online!');
-  //     if (!onlineFriends.includes(userId)) {
-  //       setOnlineFriends((onlineFriends) => [...onlineFriends, userId]);
-  //     }
-
-  //   });
-  
-  //   socket.on('offline', (userId) => {
-  //     setOnlineFriends((onlineFriends) => onlineFriends.filter((id) => id !== userId));
-  //     console.log(userId, 'Is Offline!');
-  //   });
-  // });
   useEffect(() => {
-    const handleOnline = (onlines:any) => {
+    const handleOnline = (online:any) => {
       console.log(userId, 'Is Online!');
      
-        setOnlineFriends( onlines);
+        setOnlineFriends( online);
       
     };
   
@@ -217,6 +197,8 @@ const ChatPage = () => {
           notifications={notifications}
           onlineFriends={onlineFriends}
           invitations = {invitations}
+          isLoadingNotifications = {isLoadingNotifications}
+          messages={messages}
 
         />
         {isOpened ? (

@@ -1,11 +1,9 @@
 import './App.css';
 import { ChatPage } from './pages';
 import LoginPage from './pages/loginPage';
+export const user = localStorage.getItem('userId');
 
 function App() {
-  const user = localStorage.getItem('userId');
-  console.log(user);
-
   if (!user) {
     return <LoginPage />;
   }

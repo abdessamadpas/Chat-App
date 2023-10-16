@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
+import { notificationType } from '../types';
 
-interface notificationType {
-  sender: string;
-  count: number;
-}
 
 const useGetNotification = (userId: string) => {
   const [notifications, setNotifications] = useState<notificationType[] | []>(
@@ -23,7 +20,8 @@ const useGetNotification = (userId: string) => {
         if (!response.ok) throw new Error('failed fetching notifications.');
 
         const result = await response.json();
-
+          console.log("notifications from source", result.notifications);
+          
         setNotifications(result.notifications);
       } catch (error) {
         setErrors(error);

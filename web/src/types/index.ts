@@ -20,4 +20,9 @@ export interface userType {
   status?: string;
   time?: string;
  }
- 
+ export interface notificationType {
+  _id?: string;
+  sender?: string;
+  type ?: string;
+  count?: number;
+ }

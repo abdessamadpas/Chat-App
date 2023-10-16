@@ -1,14 +1,8 @@
 import { useEffect, useState } from 'react';
-import {
-  FcGallery,
-  FcCollaboration,
-  FcParallelTasks,
-  FcDislike,
-} from 'react-icons/fc';
 import  {groups} from '../constants/index';
-import { TbPlus } from 'react-icons/tb';
+import { TbMessageStar, TbPlus } from 'react-icons/tb';
 import { MdPeople, MdOutlinePowerSettingsNew, MdLogout } from 'react-icons/md';
-import { invitationType, userType } from '../types/index';
+import { MessageTypes, invitationType, notificationType, userType } from '../types/index';
 import useRequestFriend from '../hooks/useRequestFriend';
 interface sidebarProps {
   selectReceiver: (user: userType) => void;
@@ -16,7 +10,9 @@ interface sidebarProps {
   user: string | null;
   notifications : any;
   onlineFriends : {},
-  invitations : any
+  invitations : any;
+  isLoadingNotifications : boolean
+  messages : MessageTypes[]
 
 }
 
@@ -24,20 +20,32 @@ function SideBar({
   selectReceiver,
   togglePopup,
   user,onlineFriends,
-  notifications,invitations
+  notifications,
+  invitations,
+  isLoadingNotifications,
+  messages
 }: sidebarProps) {
   
   
-  const { getFriends, requestFriend, isLoading } = useRequestFriend();
   const [friends, setFriends] = useState<userType[] | []>([]);
-
+  const { getFriends, requestFriend, isLoading } = useRequestFriend();
+  const [messageNotif, setMessageNotif] = useState(new Map<string, number>());
+  useEffect(() => {
+    if (notifications) {
+      const newNotif  = notifications.filter((notify : notificationType) => notify?.type === 'message');
+      setMessageNotif(newNotif);
+    }
+    console.log('messageNotif', messageNotif);
+    
+  }, [isLoadingNotifications, messages]);
+   
   useEffect(() => {
     const getFriendsAsync = async () => {
       const friends = await getFriends(user as string);
       friends ? setFriends([...friends]) : console.log('failed to get friends');
     };
     getFriendsAsync();
-  }, [selectReceiver, notifications, invitations]);
+  }, [selectReceiver, invitations]);
   
   //! work on if online or not
 
@@ -79,9 +87,7 @@ function SideBar({
             <TbPlus size={24} color="#905FF4" onClick={togglePopup} />
           </div>
           {friends?.map((member, index) =>
-              Object.keys(onlineFriends).includes(member._id)? 
-
-              (
+            
               <div
                 key={index}
                 onClick={() => selectReceiver(member)}
@@ -93,26 +99,17 @@ function SideBar({
                     alt={member.username}
                     className="shadow rounded-full max-w-full h-auto align-middle border-none"
                   />
+                {Object.keys(onlineFriends).includes(member._id)?     
                   <div className="absolute w-4 h-4 bg-purple-200 bg-opacity-40 rounded-full -top-0.5 -right-0.5 flex justify-center items-center ">
                     <div className="relative w-2 h-2 bg-purple-600 rounded-full  "></div>
-                  </div>
+                  </div> 
+                  : null
+                }
+                <div className="absolute w-5 h-5 bg-green-300 bg-opacity-40 rounded-xl  -bottom-0.5 -right-0.5 flex justify-center items-center ">
+                    <div className="relative w-4 h-4 bg-green-700 rounded-xl  text-center text-xs text-white"> 2</div>
+                </div> 
                 </div>
               </div>
-            ) : (
-              <div
-                key={index}
-                onClick={() => selectReceiver(member)}
-                className="flex items-center mt-3 justify-center relative"
-              >
-                <div className="w-10 h-10 overflow-hidden rounded-full ">
-                  <img
-                    src={member.image}
-                    alt={member.username}
-                    className="shadow rounded-full max-w-full h-auto align-middle border-none"
-                  />
-                </div>
-              </div>
-            ),
           )}
         </div>
       </div>

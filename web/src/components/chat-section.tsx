@@ -12,7 +12,7 @@ import {
 } from 'react-icons/md';
 import { MessageTypes, userType } from '../types';
 import { socket } from '../pages/ChatPage';
-
+import {user} from '../App';
 interface sendBoxProps {
   chatId: string;
   receiver: userType;
@@ -26,7 +26,6 @@ function ChatSection({
   receiver,
   setMessages,
 }: sendBoxProps) {
-  const user = localStorage.getItem('userId');
   const [message, setMessage] = React.useState<string>('');
 
   async function sendMessage() {

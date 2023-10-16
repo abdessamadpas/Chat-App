@@ -169,3 +169,32 @@ export const groups = [
     members: 2,
   },
 ];
+export const attachments = [
+  {
+    name: 'Very important file.pdf',
+    type: 'pdf',
+    size: '7.6',
+    date: '31/10/23, 11:15 AM',
+  },
+  {
+    name: 'Very important file.doc',
+    type: 'doc',
+
+    size: '7.6',
+    date: '31/10/23, 11:15 AM',
+  },
+  {
+    name: 'Very important file.txt',
+    type: 'txt',
+
+    size: '7.6',
+    date: '31/10/23, 11:15 AM',
+  },
+  {
+    name: 'Very important file.pdf',
+    type: 'pdf',
+
+    size: '7.6',
+    date: '31/10/23, 11:15 AM',
+  },
+];
