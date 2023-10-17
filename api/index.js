@@ -72,7 +72,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send-message", async (newMessage) => {
+    console.log("newMessage", newMessage);
+    const receiverIdSocket = getUserSocketId(newMessage.receiver)
     socket.to(newMessage.chatId).emit("receive-message", newMessage);
+    socket.to(receiverIdSocket).emit("receive-message-notif", newMessage);
     saveMessageOnDB(newMessage);
     setNotifications(newMessage.sender, newMessage.receiver, "message");
   });
@@ -152,7 +155,7 @@ app.get("/friends/:userId", getFriends);
 app.post("/addfriend/:sender/:receiver", addFriend);
 app.get("/messages/:senderId/:receiverId", getMessages);
 app.delete("/messages/:userId", clearChat);
-app.get("/notifications/:id", getNotifications);
+app.get("/notifications/:id/:type", getNotifications);
 app.delete("/notifications", deleteNotification);
 app.get("/invitations/:userId", getInvitation );
 

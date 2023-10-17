@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import  {groups} from '../constants/index';
-import { TbMessageStar, TbPlus } from 'react-icons/tb';
-import { MdPeople, MdOutlinePowerSettingsNew, MdLogout } from 'react-icons/md';
-import { MessageTypes, invitationType, notificationType, userType } from '../types/index';
+import { TbPlus } from 'react-icons/tb';
+import { MdPeople, MdLogout } from 'react-icons/md';
+import { MessageTypes, notificationType, userType } from '../types/index';
 import useRequestFriend from '../hooks/useRequestFriend';
 interface sidebarProps {
   selectReceiver: (user: userType) => void;
@@ -13,6 +13,9 @@ interface sidebarProps {
   invitations : any;
   isLoadingNotifications : boolean
   messages : MessageTypes[]
+  setNotifications : any
+  shownMessage : any
+  setshownMessage : any
 
 }
 
@@ -23,22 +26,16 @@ function SideBar({
   notifications,
   invitations,
   isLoadingNotifications,
-  messages
+  messages,
+  setNotifications,
+  shownMessage,
+  setshownMessage
 }: sidebarProps) {
   
   
   const [friends, setFriends] = useState<userType[] | []>([]);
   const { getFriends, requestFriend, isLoading } = useRequestFriend();
-  const [messageNotif, setMessageNotif] = useState(new Map<string, number>());
-  useEffect(() => {
-    if (notifications) {
-      const newNotif  = notifications.filter((notify : notificationType) => notify?.type === 'message');
-      setMessageNotif(newNotif);
-    }
-    console.log('messageNotif', messageNotif);
-    
-  }, [isLoadingNotifications, messages]);
-   
+
   useEffect(() => {
     const getFriendsAsync = async () => {
       const friends = await getFriends(user as string);
@@ -46,13 +43,22 @@ function SideBar({
     };
     getFriendsAsync();
   }, [selectReceiver, invitations]);
-  
+
+  useEffect(() => { 
+    console.log('shownMessage', shownMessage);
+    
+    setTimeout(() => {
+      setshownMessage({})
+  } , 9999000)
+  }, [shownMessage]);
+ 
   //! work on if online or not
 
 
   return (
-    <div className="min-w-[96px]   bg-gray-100  flex flex-col items-center  justify-between gap-5  h-screen   pt-10 	px-3  overflow-x-hidden  overflow-y-hidden w-24	 ">
-      <div className="flex  flex-col items-center justify-center gap-3 ">
+    <div className="min-w-[96px] block   ">
+      <div className='bg-gray-100  flex flex-col items-center  justify-between gap-5  h-screen   pt-10 	px-3  overflow-x-hidden  overflow-y-hidden w-24	'>
+        <div className="flex  flex-col items-center justify-center gap-3 ">
         <div className="flex flex-col justify-center items-center">
           <p className="mb-5 text-xs text-light-color  font-semibold ">
             {' '}
@@ -87,7 +93,14 @@ function SideBar({
             <TbPlus size={24} color="#905FF4" onClick={togglePopup} />
           </div>
           {friends?.map((member, index) =>
-            
+            <div className='block'>
+            {
+              (shownMessage.content && shownMessage.sender == member._id )  ? (
+
+              <div className="bg-white  rounded-xl border shadow-md absolute mt-3  left-20  ">
+                  <div className="p-2    h-9  rounded-xl relative text-center font-semibold text-xs text-red-600">{shownMessage.content}</div>
+              </div>) : null
+                }
               <div
                 key={index}
                 onClick={() => selectReceiver(member)}
@@ -105,15 +118,21 @@ function SideBar({
                   </div> 
                   : null
                 }
+                {
+                notifications  ? (
                 <div className="absolute w-5 h-5 bg-green-300 bg-opacity-40 rounded-xl  -bottom-0.5 -right-0.5 flex justify-center items-center ">
-                    <div className="relative w-4 h-4 bg-green-700 rounded-xl  text-center text-xs text-white"> 2</div>
+                    <div className="relative w-4 h-4 bg-green-700 rounded-xl  text-center text-xs text-white">{notifications}</div>
+                </div>) : null
+                }
+              
                 </div> 
-                </div>
-              </div>
-          )}
+              </div></div>
+          )} 
         </div>
       </div>
-
+      </div>
+      
+      
       <div className="flex flex-col mb-2">
         <div className="  bg-white w-10 h-10 flex justify-center items-center rounded-full mt-2">
           <MdPeople size={24} color="#905FF4" />

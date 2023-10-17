@@ -29,16 +29,22 @@ const ChatPage = () => {
   const [invitations, setInvitations] = useState<invitationType[]>([]);
   const [receiver, setReceiver] = useState<userType | null>(null);
   const [unreadmessage, setUnreadmessage] = useState(new Map<string, number>());
-  
+  const deleteNotification = useDeleteNotification();
   const [onlineFriends, setOnlineFriends] = useState({});
   const { fetchMessages, errors } = useGetMessages();
+  const [shownMessage, setshownMessage] = useState({});
+  const {
+    notificationsCount : notificationsMessages,
+    isLoading : isLoadingNotifMessages,
+    setNotificationsCount : setNotificationsMessages,
+  } = useGetNotification(userId as string, 'message');
   const {
     errors: notifsErrors,
-    notifications,
-    isLoading : isLoadingNotifications,
-  } = useGetNotification(userId as string);
+    notificationsCount : notificationsRequestFriends,
+    isLoading : isLoadingNotificationsRequestFriends,
+  } = useGetNotification(userId as string, 'requestFriend');
+
   const {fetchInvitations , errors : invitationErros}  = useInvitations()
-  const deleteNotification = useDeleteNotification();
   const {
     users,
     isLoading: isLoadingUsers,
@@ -71,19 +77,15 @@ const ChatPage = () => {
 
 //! working hereeeeeeeeeeeeeeeeeeeeeeeeee
   //todo : get all  notifications
+
   useEffect(() => {
-    if (notifications) {
-      const newNotif = notifications.filter(notify => notify?.type === 'message');
-      setUnreadmessage(new Map(newNotif.map((notify) => [notify.sender?? '', notify.count?? 0])));
-    }else(
-      setUnreadmessage(new Map())
-    
-    )
-  }, [isLoadingNotifications]);
+    // This effect will be triggered whenever notificationsMessages changes
+    setNotificationsMessages(notificationsMessages);
+  }, [notificationsMessages, messages, unreadmessage]); // Add notificationsMessages as a dependency
 
+  
+  //todo : select receiver
   const selectReceiver = async (receiver: userType) => {
-    console.log('receiver is ', receiver);
-
     const generatedChatId = [receiver._id, userId].sort().join('-');
     setChatId(generatedChatId);
     setReceiver(receiver);
@@ -111,6 +113,7 @@ const ChatPage = () => {
       userId as string,
       receiver?._id,
     );
+    setNotificationsMessages(0);
     if (!isnotifyDeleted) console.log('failed delete notifications 🙂');
 
     socket.emit('join-chat', {
@@ -130,6 +133,7 @@ const ChatPage = () => {
 
     const handleReceiveMessages = (newMessage: MessageTypes) => {
       setMessages((messages) => [...messages, newMessage]);
+      // setNotificationsMessages((count) => count+1);
       if (receiver?._id === newMessage.sender) return;
       setUnreadmessage((prevMessages) => {
         const updateUnreadmessages = new Map(prevMessages);
@@ -145,12 +149,14 @@ const ChatPage = () => {
         return updateUnreadmessages;
       });
     };
+
     const receiveInvitations = (newInvit: invitationType) => {
       console.log('receiveInvitations', newInvit);
       setInvitations((invitations)=>[
         ...invitations, newInvit
       ])
     };
+
     socket.on('receive-friend-request', receiveInvitations);
     socket.on('join-chat-req', handleJoinChat);
     socket.on('receive-message', handleReceiveMessages);
@@ -163,6 +169,20 @@ const ChatPage = () => {
       socket.off('receive-friend-request');
     };
   }, [receiver]);
+
+  useEffect(() => {
+
+    socket.on('receive-message-notif', (data: any) => {
+      console.log('receive-message-notif', data);
+      setNotificationsMessages((count) => count+1);
+      setshownMessage(data);
+    });
+
+    return () => {
+      socket.off('receive-message-notif');
+    }
+  }, []);
+  
 
   useEffect(() => {
     const handleOnline = (online:any) => {
@@ -194,11 +214,14 @@ const ChatPage = () => {
           selectReceiver={selectReceiver}
           togglePopup={togglePopup}
           user={userId}
-          notifications={notifications}
+          notifications={notificationsMessages}
+          setNotifications={setNotificationsMessages}
           onlineFriends={onlineFriends}
           invitations = {invitations}
-          isLoadingNotifications = {isLoadingNotifications}
+          isLoadingNotifications = {isLoadingNotifMessages}
           messages={messages}
+          shownMessage={shownMessage}
+          setshownMessage={setshownMessage}
 
         />
         {isOpened ? (
@@ -219,7 +242,7 @@ const ChatPage = () => {
             receiver={receiver}
           />
         ) : (
-          <div className=" flex-initial relative  w-4/5 my-5 rounded-2xl bg-white  h-[calc(100vh-<height-of-your-fixed-div>)]"></div>
+          <div className=" flex-initial   w-4/5 my-5 rounded-2xl bg-white  h-[calc(100vh]"></div>
         )}
         <RightBar 
           invitations = {invitations}

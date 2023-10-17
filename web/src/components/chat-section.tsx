@@ -48,7 +48,7 @@ function ChatSection({
   const [sentMessages, setSentMessages] = React.useState<MessageTypes[]>([]);
 
   return (
-    <div className=" flex-initial relative  w-4/5 my-5 rounded-2xl bg-white  h-[calc(100vh-<height-of-your-fixed-div>)]">
+    <div className="  flex flex-col  w-4/5  rounded-2xl bg-white   max-h-screen">
       {/*  header */}
       <div className="  py-5 flex  justify-between px-9 items-center">
         <div className="flex flex-row gap-3 justify-center items-center ">
@@ -77,11 +77,10 @@ function ChatSection({
       </div>
       <hr />
       {/* body */}
-      <div>
+      <div className=' flex-grow  overflow-y-auto '>
         {/* messages */}
-        <div className="">
           <div
-            className="py-3 px-4 flex-col flex flex-grow max-h-96"
+            className=" py-3 px-4 flex-grow flex flex-col"
             style={{ overflowY: 'auto' }}
           >
             {messages.map((messageData, index) => (
@@ -103,10 +102,10 @@ function ChatSection({
               </div>
             ))}
           </div>
-        </div>
 
         {/* send tools */}
-        <div className=" absolute bottom-0 left-0 right-0 ">
+        
+      </div>
           <hr />
           <div className="p-6 flex  justify-between items-center">
             <div className="flex gap-5 items-center">
@@ -124,8 +123,7 @@ function ChatSection({
               <MdSend size={20} color="#BDBDBD" onClick={sendMessage} />
             </div>
           </div>
-        </div>
-      </div>
+      
     </div>
   );
 }

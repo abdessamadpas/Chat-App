@@ -2,10 +2,8 @@ import { useEffect, useState } from 'react';
 import { notificationType } from '../types';
 
 
-const useGetNotification = (userId: string) => {
-  const [notifications, setNotifications] = useState<notificationType[] | []>(
-    [],
-  );
+const useGetNotification = (userId: string, type : string) => {
+  const [notificationsCount, setNotificationsCount] = useState(0);
   const [errors, setErrors] = useState<unknown>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -14,7 +12,7 @@ const useGetNotification = (userId: string) => {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:1337/notifications/${userId}`,
+          `http://localhost:1337/notifications/${userId}/${type}`,
         );
 
         if (!response.ok) throw new Error('failed fetching notifications.');
@@ -22,7 +20,7 @@ const useGetNotification = (userId: string) => {
         const result = await response.json();
           console.log("notifications from source", result.notifications);
           
-        setNotifications(result.notifications);
+          setNotificationsCount(result.notifications[0].count);
       } catch (error) {
         setErrors(error);
       } finally {
@@ -31,7 +29,7 @@ const useGetNotification = (userId: string) => {
     };
     getNotifications();
   }, []);
-  return { notifications, errors, isLoading };
+  return { notificationsCount,setNotificationsCount, errors, isLoading };
 };
 
 export default useGetNotification;

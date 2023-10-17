@@ -1,5 +1,5 @@
 const useDeleteNotification = () => {
-  const deleteNotification = async (receiver: string, sender: string) => {
+  const deleteNotification = async ( sender: string,receiver: string) => {
     try {
       const response = await fetch(
         `http://localhost:1337/notifications?sender=${sender}&receiver=${receiver}`,

@@ -17,15 +17,13 @@ interface RightBarProps {
 function RightBar({invitations,setInvitations}:RightBarProps) {
   const username = localStorage.getItem('username');
   const [showPopup, setShowPopup] = useState(false);
-  const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
   const pendingInvitations = invitations.filter(
     (invitation) => invitation.status === 'pending'
   );
+  
   const openPopup = () => {
     setShowPopup(!showPopup);
   };
-
-
 
   return (
     <div className="hidden  lg:block    h-screen overflow-y-auto overflow-x-hidden  w-96  ">

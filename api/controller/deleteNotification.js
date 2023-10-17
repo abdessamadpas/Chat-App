@@ -5,9 +5,11 @@ const deleteNotification = async (req, res) => {
   const receiver = req.query.receiver;
   try {
     await User.updateOne(
-      { userId: receiver },
-      { $pull: { notifications: { sender } } },
-    );
+      { _id: sender },
+      { $pull: { notifications: { sender : receiver } } },
+    ).then((res) => {
+      console.log("notification deleted",res);
+    });
     res.json({ deleteNotify: true });
   } catch (error) {
     res.json({ error });
