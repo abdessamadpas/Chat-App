@@ -49,7 +49,7 @@ function SideBar({
     
     setTimeout(() => {
       setshownMessage({})
-  } , 9999000)
+  } , 5000)
   }, [shownMessage]);
  
   //! work on if online or not
