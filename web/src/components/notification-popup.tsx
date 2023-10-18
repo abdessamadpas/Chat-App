@@ -12,7 +12,6 @@ interface PopupProps {
   setInvitations : React.Dispatch<React.SetStateAction<invitationType[]>>
 }
 function NotificationPopup({openPopup, invitations,setInvitations}:PopupProps) {
-  console.log("invitations" , invitations);
   
   const pendingInvitations = invitations.filter(
     (invitation) => invitation.status === 'pending'
@@ -74,9 +73,7 @@ function NotificationPopup({openPopup, invitations,setInvitations}:PopupProps) {
           <MdCheck
             size={20}
             color="red"
-            onClick={()=>{
-              console.log("invitation", invitation);
-              
+            onClick={()=>{              
               acceptFriend(invitation)}}
           />
         </div>

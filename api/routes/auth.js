@@ -8,7 +8,6 @@ const router = express.Router();
 
 const signup = router.post("/signup", async (req, res) => {
   const user = new User(req.body);
-  console.log(user);
   if (!user.username || !user.password || !user.email) {
     res.status(400).json({ error: "Please enter all fields" });
     return;
@@ -76,7 +75,6 @@ const signIn = router.post("/signin", async (req, res, next) => {
     });
   }
   const user = await User.findOne({ email: req.body.email });
-  console.log("user :", user);
   if (user) {
     const isMatch = await bcrypt.compare(req.body.password, user.password);
     if (isMatch) {

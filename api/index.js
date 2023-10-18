@@ -72,7 +72,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send-message", async (newMessage) => {
-    console.log("newMessage", newMessage);
     const receiverIdSocket = getUserSocketId(newMessage.receiver)
     socket.to(newMessage.chatId).emit("receive-message", newMessage);
     socket.to(receiverIdSocket).emit("receive-message-notif", newMessage);

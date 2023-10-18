@@ -5,23 +5,16 @@ import useRequestFriend from '../hooks/useRequestFriend';
 import { socket } from '../pages/ChatPage';
 
 interface PopupProps {
-  isOpen: boolean;
   togglePopup: () => void;
   users: userType[];
   userId: string;
   invitations : invitationType[];
-  setInvitations : React.Dispatch<React.SetStateAction<invitationType[]>>;
 }
 
-function PopupModel({ togglePopup, isOpen, users, userId, invitations, setInvitations }: PopupProps) {
-  // const {requestFriend } = useRequestFriend();
+function PopupModel({ togglePopup, users, userId, invitations }: PopupProps) {
+
   const [usersInvited, setUsersInvited] = React.useState<invitationType[]>(invitations);
   const [search, setSearch] = React.useState<Array<userType>>();
-console.log('search',search );
-
-
-
-
   const filtredUsers = users.map((user) =>
   usersInvited.find((invitation) => invitation.sender === user._id )
   ? { ...user, isInvited: true }
@@ -100,8 +93,6 @@ console.log('search',search );
                   <button
                     className="bg-purple-500 text-white p-2 rounded-lg"
                     onClick={() => {
-                      console.log("member :", member);
-                      console.log("Button Text:", member.isInvited ? 'Invited' : 'Add');
                       addFriend(member);
                       setUsersInvited((invitations)=>[
                         ...invitations, {sender: userId, receiver: member._id},

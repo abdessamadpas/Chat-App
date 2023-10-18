@@ -35,7 +35,18 @@ function SideBar({
   
   const [friends, setFriends] = useState<userType[] | []>([]);
   const { getFriends, requestFriend, isLoading } = useRequestFriend();
+  const [selectedFriend , setSelectedFriend] = useState<number >();
+  const [selectedGroup, setSelectedGroup] = useState<number>();
 
+  const selectGroup = (index : number) => {
+    setSelectedGroup(index)
+    setSelectedFriend(undefined)
+  }
+  const selectFriend = (index : number) => {
+    setSelectedFriend(index)
+    setSelectedGroup(undefined)
+  }
+  
   useEffect(() => {
     const getFriendsAsync = async () => {
       const friends = await getFriends(user as string);
@@ -44,13 +55,12 @@ function SideBar({
     getFriendsAsync();
   }, [selectReceiver, invitations]);
 
-  useEffect(() => { 
-    console.log('shownMessage', shownMessage);
-    
+  useEffect(() => {     
     setTimeout(() => {
       setshownMessage({})
   } , 5000)
   }, [shownMessage]);
+ 
  
   //! work on if online or not
 
@@ -68,7 +78,7 @@ function SideBar({
             <TbPlus size={24} color="#905FF4" />
           </div>
           {groups.map((group, index) =>
-            index === 3 ? (
+            index == selectedGroup ? (
               <div key={index} className="flex items-center mt-2 ">
                 <div className=" bg-white w-10 h-10 flex justify-center items-center rounded-full  border-3  border-purple-500 border-solid">
                   {group.icon}
@@ -77,7 +87,7 @@ function SideBar({
             ) : (
               <div
                 key={index}
-                onClick={() => console.log(index)}
+                onClick={() => {selectGroup(index)}}
                 className="flex items-center mt-2"
               >
                 <div className="  bg-white w-10 h-10 flex justify-center items-center rounded-full">
@@ -94,13 +104,13 @@ function SideBar({
           </div>
           {friends?.map((member, index) =>
             <div className='block'>
-            {
-              (shownMessage.content && shownMessage.sender == member._id )  ? (
+              {
+                (shownMessage.content && shownMessage.sender == member._id )  ? 
 
-              <div className="bg-white  rounded-xl border shadow-md absolute mt-3  left-20  ">
-                  <div className="p-2    h-9  rounded-xl relative text-center font-semibold text-xs text-red-600">{shownMessage.content}</div>
-              </div>) : null
-                }
+                <div className="bg-white  rounded-xl border shadow-md absolute mt-3  left-20  ">
+                    <div className="p-2    h-9  rounded-xl relative text-center font-semibold text-xs text-red-600">{shownMessage.content}</div>
+                </div> : null
+              } 
               <div
                 key={index}
                 onClick={() => selectReceiver(member)}

@@ -1,7 +1,6 @@
 const User = require("../models/User");
 
 const changeInvitationStatus = async (userId, friendId, status) => {
-  console.log("change status function");
   const sender = await User.findById(userId);
   const receiver = await User.findById(friendId);
   const existingInvitation = sender.invitations.find(

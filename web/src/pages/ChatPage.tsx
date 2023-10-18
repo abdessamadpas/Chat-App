@@ -10,6 +10,7 @@ import useDeleteNotification from '../hooks/useDeleteNotifications';
 import PopupModel from '../components/popup-model';
 import useGetUsers from '../hooks/useGetUsers';
 import useInvitations from '../hooks/useInvitaions';
+import SelectReceiverNone from '../components/selectReceiver';
 const host = 'http://localhost:1337';
 
 export const socket = io(host, {
@@ -23,7 +24,6 @@ export const socket = io(host, {
 
 const ChatPage = () => {
 
-  console.log('user connected is ', userId);
   const [chatId, setChatId] = useState<string>('');
   const [messages, setMessages] = useState<MessageTypes[]>([]);
   const [invitations, setInvitations] = useState<invitationType[]>([]);
@@ -71,10 +71,6 @@ const ChatPage = () => {
   }, []);
 
 
-  useEffect(() => {
-    console.log(' invitations', invitations);
-  }, [invitations]);
-
 //! working hereeeeeeeeeeeeeeeeeeeeeeeeee
   //todo : get all  notifications
 
@@ -93,7 +89,7 @@ const ChatPage = () => {
     const fetchingMessages = async () => {
       setMessages([])
       const fetchedMessages = await fetchMessages(userId, receiver?._id);
-      console.log("rhe errror is",fetchedMessages);
+      console.log("the errror is",fetchedMessages);
       
       fetchedMessages
         ? setMessages([...fetchedMessages])
@@ -151,7 +147,6 @@ const ChatPage = () => {
     };
 
     const receiveInvitations = (newInvit: invitationType) => {
-      console.log('receiveInvitations', newInvit);
       setInvitations((invitations)=>[
         ...invitations, newInvit
       ])
@@ -173,7 +168,6 @@ const ChatPage = () => {
   useEffect(() => {
 
     socket.on('receive-message-notif', (data: any) => {
-      console.log('receive-message-notif', data);
       setNotificationsMessages((count) => count+1);
       setshownMessage(data);
     });
@@ -186,8 +180,7 @@ const ChatPage = () => {
 
   useEffect(() => {
     const handleOnline = (online:any) => {
-      console.log(userId, 'Is Online!');
-     
+      console.log(userId, 'Is Online!');     
         setOnlineFriends( online);
       
     };
@@ -227,11 +220,9 @@ const ChatPage = () => {
         {isOpened ? (
           <PopupModel
             togglePopup={togglePopup}
-            isOpen={isOpened}
             users={users}
             userId={userId as string}
             invitations={invitations}
-            setInvitations={setInvitations}
           />
         ) : null}
         {receiver ? (
@@ -242,8 +233,8 @@ const ChatPage = () => {
             receiver={receiver}
           />
         ) : (
-          <div className=" flex-initial   w-4/5 my-5 rounded-2xl bg-white  h-[calc(100vh]"></div>
-        )}
+          <SelectReceiverNone/>        
+          )}
         <RightBar 
           invitations = {invitations}
           setInvitations = {setInvitations}

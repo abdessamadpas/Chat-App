@@ -10,11 +10,8 @@ const useGetMessages = () => {
       );
 
       if (!response.ok) throw new Error('failed get messages');
-
-      const result = await response.json();
-        console.log("msgs from source ", result);
-        
-      return result;
+        const result = await response.json();        
+        return result;
     } catch (error) {
       console.log(error);
       setErros(error);
