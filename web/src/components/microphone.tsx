@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
-import ReactAudioPlayer from 'react-audio-player';
 import { MdMicNone } from 'react-icons/md';
 import Waveform from './audio-player';
+import { PiWaveformBold , PiRecordLight} from "react-icons/pi";
 
 function MicrophoneSetup({ audioMode ,setAudioMode}: any) {
     const [permission, setPermission] = useState<boolean>(false);
@@ -30,12 +30,11 @@ function MicrophoneSetup({ audioMode ,setAudioMode}: any) {
     }; 
   const startRecording = async () => {
     console.log("start recording");
-
     setRecordingStatus("recording");
-    // Create a new MediaRecorder instance using the stream
     const media = new MediaRecorder(stream as MediaStream, { mimeType });
     // Set the MediaRecorder instance to the mediaRecorder ref
     mediaRecorder.current = media;
+    setAudioMode(true);
     // Invokes the start method to start the recording process
     mediaRecorder.current.start();
     let localAudioChunks: Blob[] = [];
@@ -51,37 +50,33 @@ function MicrophoneSetup({ audioMode ,setAudioMode}: any) {
   const stopRecording = () => {
     if (mediaRecorder.current === null) return;
     setRecordingStatus("inactive");
-    //stops the recording instance
     mediaRecorder.current.stop();
     mediaRecorder.current.onstop = () => {
-      //creates a blob file from the audiochunks data
        const audioBlob = new Blob(audioChunks, { type: mimeType });
-      //creates a playable URL from the blob file.
        const audioUrl = URL.createObjectURL(audioBlob);
        setAudio(audioUrl);
        setAudioChunks([]);
     };
-  };
+    };
 
   const recordAudio =  () => {
-
-    permission ? console.log("permission granted") : getMicrophonePermission();
-    if (permission && recordingStatus === "inactive" ) {       
-        setAudioMode(true)
-        startRecording() 
-    }else{ 
-        stopRecording()
-    }
-    }
-
+    !permission ? getMicrophonePermission() : null;
+    permission && recordingStatus === "inactive"  ?   startRecording()  : stopRecording()     
+    };
+    
   return (
     <> 
     
     {audio ? (
         <div className="audio-container flex items-center justify-center">
             <Waveform url={audio} />
-        </div>
-    ) : <MdMicNone size={23} color="#BDBDBD" onClick={ recordAudio } />}
+        </div> 
+        ) : 
+        recordingStatus === "recording" ?
+        <PiWaveformBold size={23} color="#BDBDBD" onClick={ recordAudio } />
+    :
+        <MdMicNone size={23} color="#BDBDBD" onClick={ recordAudio } />
+    }
     </>
   );
 }

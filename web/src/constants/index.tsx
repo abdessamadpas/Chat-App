@@ -140,7 +140,7 @@ export const members = [
       'https://images.unsplash.com/photo-1612000529646-f424a2aa1bff?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
   },
   {
-    name: 'Oumaima chi la3ba',
+    name: 'Oumaima El hachimi',
     date: 'last seen recently',
     leader: false,
     image:
