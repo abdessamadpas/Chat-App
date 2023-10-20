@@ -129,9 +129,9 @@ function SideBar({
                   : null
                 }
                 {
-                notifications.sender == member._id  ? (
+                notifications?.sender == member._id  ? (
                 <div className="absolute w-5 h-5 bg-green-300 bg-opacity-40 rounded-xl  -bottom-0.5 -right-0.5 flex justify-center items-center ">
-                    <div className="relative w-4 h-4 bg-green-700 rounded-xl  text-center text-xs text-white">{notifications.count}</div>
+                    <div className="relative w-4 h-4 bg-green-700 rounded-xl  text-center text-xs text-white">{notifications?.count}</div>
                 </div>) : null
                 }
               

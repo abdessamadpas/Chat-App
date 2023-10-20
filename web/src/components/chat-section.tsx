@@ -6,20 +6,13 @@ import { Empty } from 'antd';
 //* emoji picker
 import EmojiPicker, {
   EmojiStyle,
-  SkinTones,
-  Theme,
-  Categories,
   EmojiClickData,
-  Emoji,
-  SuggestionMode,
-  SkinTonePickerLocation
 } from "emoji-picker-react";
 // icons used in this screen
 import {
   MdMap,
   MdCall,
   MdMoreVert,
-  MdMicNone,
   MdOutlineTagFaces,
   MdSend,
   MdAttachFile,
@@ -33,6 +26,8 @@ import storage from "../firebaseConfig"
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import SkeletonSection from './skeletonSection';
 import PopoverSection from './popover-section';
+import { Mic } from 'lucide-react';
+import MicrophoneSetup from './microphone';
 
 interface sendBoxProps {
   chatId: string;
@@ -59,6 +54,8 @@ function ChatSection({
   const [loadingFailed, setLoadingFailed] = useState<boolean>(false);
   const [sendWithFile, setSendWithFile] = useState<boolean>(false);
   const [isOpenedPickerEmoji, setIsOpenedPickerEmoji] = useState<boolean>(false);
+  const [audioMode, setAudioMode] = useState<boolean>(false);
+
 
   useEffect(() => {
     console.log("messages", messages);
@@ -109,7 +106,7 @@ function ChatSection({
 }   
 
   async function sendMessage() {
-    
+    setAudioMode(false)
     if (message === '' && file === undefined) return;
     if (message === '' && file !== undefined) {
       setSendWithFile(true);
@@ -232,6 +229,7 @@ function ChatSection({
       }
       <hr />
       <div className="p-6 flex justify-between items-center">
+        { audioMode ?
         <div className="flex gap-5 items-center">
           <div className="flex flex-row gap-2">
             <label htmlFor="fileInput">
@@ -252,8 +250,8 @@ function ChatSection({
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
-        </div>
-        <div className="flex gap-2">
+        </div> : false}
+        <div className="flex gap-2 items-center ">
           <MdOutlineTagFaces size={23} color="#BDBDBD" onClick={emojiPopup}/>
           <div className=' absolute bottom-16  '>
             {  isOpenedPickerEmoji &&
@@ -264,11 +262,13 @@ function ChatSection({
             /> 
             }
           </div>
-          <MdMicNone size={23} color="#BDBDBD" />
-          {!sendWithFile ? 
+            
+          <MicrophoneSetup audioMode ={audioMode} setAudioMode ={setAudioMode} />
+            {!sendWithFile ? 
             <MdSend
               size={23}
               color="#BDBDBD"
+              
               onClick={sendMessage}
             /> : (( percent > 0 ) &&
               <Space size={30}> 
