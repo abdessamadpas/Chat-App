@@ -31,7 +31,7 @@ const ChatPage = () => {
   const [unreadmessage, setUnreadmessage] = useState(new Map<string, number>());
   const deleteNotification = useDeleteNotification();
   const [onlineFriends, setOnlineFriends] = useState({});
-  const { fetchMessages, errors } = useGetMessages();
+  const { fetchMessages, errors, loading } = useGetMessages();
   const [shownMessage, setshownMessage] = useState({});
   const {
     notificationsCount : notificationsMessages,
@@ -60,6 +60,7 @@ const ChatPage = () => {
   const togglePopup = () => {
     setIsOpened(!isOpened);
   };
+
   // todo fetch invitations
   useEffect(() => {
     const fetchInvitationsAsync = async (userId: string) => {
@@ -71,7 +72,7 @@ const ChatPage = () => {
   }, []);
 
 
-//! working hereeeeeeeeeeeeeeeeeeeeeeeeee
+//! working here
   //todo : get all  notifications
 
   useEffect(() => {
@@ -88,9 +89,7 @@ const ChatPage = () => {
 
     const fetchingMessages = async () => {
       setMessages([])
-      const fetchedMessages = await fetchMessages(userId, receiver?._id);
-      console.log("the errror is",fetchedMessages);
-      
+      const fetchedMessages = await fetchMessages(userId, receiver?._id);      
       fetchedMessages
         ? setMessages([...fetchedMessages])
         : console.log('fetching messages failed', errors);
@@ -201,7 +200,7 @@ const ChatPage = () => {
   }, [onlineFriends]); // Make sure to include onlineFriends as a dependency
   
   return (
-    <main className="w-full  h-screen   overflow-hidden   bg-gray-100 ">
+    <main className="w-full  h-screen p-2   overflow-hidden   bg-gray-100 ">
       <div className="flex flex-row  ">
         <SideBar
           selectReceiver={selectReceiver}
@@ -230,15 +229,18 @@ const ChatPage = () => {
             chatId={chatId}
             messages={messages}
             setMessages={setMessages}
+            onlineFriends={onlineFriends}
             receiver={receiver}
+            loading = {loading}
+
           />
         ) : (
           <SelectReceiverNone/>        
           )}
-        <RightBar 
+       {receiver ? ( <RightBar 
           invitations = {invitations}
           setInvitations = {setInvitations}
-          />
+          />) : null}
       </div>
     </main>
   );

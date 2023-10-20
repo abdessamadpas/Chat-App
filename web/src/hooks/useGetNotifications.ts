@@ -17,7 +17,10 @@ const useGetNotification = (userId: string, type : string) => {
 
         if (!response.ok) throw new Error('failed fetching notifications.');
           const result = await response.json();          
-          setNotificationsCount(result.notifications[0].count);
+          setNotificationsCount(result.notifications[0]);
+          console.log(result.notifications[0]);
+          
+
       } catch (error) {
         setErrors(error);
       } finally {

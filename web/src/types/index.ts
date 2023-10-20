@@ -5,6 +5,7 @@ export interface MessageTypes {
   receiver: string;
   content: string;
   time: string;
+  
 }
 export interface userType {
   _id: string;

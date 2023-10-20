@@ -1,7 +1,5 @@
 import React, { useEffect } from 'react';
 import { invitationType, userType } from '../types';
-import e from 'express';
-import useRequestFriend from '../hooks/useRequestFriend';
 import { socket } from '../pages/ChatPage';
 
 interface PopupProps {
@@ -11,7 +9,8 @@ interface PopupProps {
   invitations : invitationType[];
 }
 
-function PopupModel({ togglePopup, users, userId, invitations }: PopupProps) {
+function PopupModel({ togglePopup, users, userId, invitations,  }: PopupProps) {
+
 
   const [usersInvited, setUsersInvited] = React.useState<invitationType[]>(invitations);
   const [search, setSearch] = React.useState<Array<userType>>();
