@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import { Empty } from 'antd';
 
 
@@ -7,9 +7,6 @@ import {
   MdMap,
   MdCall,
   MdMoreVert,
-  MdOutlineTagFaces,
-  MdSend,
-  MdAttachFile,
 } from 'react-icons/md';
 import { MessageTypes, userType } from '../types';
 import {user} from '../App';
@@ -45,27 +42,27 @@ function ChatSection({
         <div className="flex flex-row gap-3 justify-center items-center ">
           <div className="  bg-gray-200  w-10  h-10 flex justify-center items-center rounded-full">
             <div className="w-10 h-10 overflow-hidden rounded-full ">
-                    <img
-                      src={receiver.image}
-                      alt={receiver.username}
-                      className="shadow rounded-full max-w-full h-auto align-middle border-none"
-                    />
+              <img
+                src={receiver.image}
+                alt={receiver.username}
+                className="shadow rounded-full max-w-full h-auto align-middle border-none"
+              />
             </div>
           </div>
           <div>
             <p className=" font-semibold  text-xl">{receiver.username}</p>
             {Object.keys(onlineFriends).includes(receiver._id)?     
-                 <> 
-                  <div className="absolute w-4 h-4 bg-purple-200 bg-opacity-40 rounded-full  flex justify-center items-center ">
-                    <div className="relative w-2 h-2 bg-purple-600 rounded-full  "></div>
-                  </div> 
+              <> 
+                <div className="absolute w-4 h-4 bg-purple-200 bg-opacity-40 rounded-full  flex justify-center items-center ">
+                  <div className="relative w-2 h-2 bg-purple-600 rounded-full  "></div>
+                </div> 
 
-                  <p className=" font-extralight ml-5  text-xs text-gray-400">
-                   Online
-                  </p>
-                  </>
-                  : null
-                }
+                <p className=" font-extralight ml-5  text-xs text-gray-400">
+                  Online
+                </p>
+              </>
+              : null
+            }
           </div>
         </div>
         <div className="flex gap-3  justify-center items-center">
@@ -91,27 +88,27 @@ function ChatSection({
       :
       <div className=' flex-grow    overflow-x-hidden scrollbar-thin scrollbar-rounded-lg scrollbar-thumb-purple-500 scrollbar-track-purple-100'>
         {/* messages */}
-          <div className=" py-3 px-4 flex-grow flex flex-col overflow-y-auto " >
-            {messages.map((messageData, index) => (
-              <div
-                key={index}
-                className={`mb-2 ${
-                  messageData.sender === user ? 'text-right' : 'text-left'
-                }`}
-              >
-                <PopoverSection messageData ={messageData} user={user}/>
-               
-              </div>
-            ))}
-          </div>
+        <div className=" py-3 px-4 flex-grow flex flex-col overflow-y-auto " >
+          {messages.map((messageData, index) => (
+            <div
+              key={index}
+              className={`mb-2 ${
+                messageData.sender === user ? 'text-right' : 'text-left'
+              }`}
+            >
+              <PopoverSection messageData ={messageData} user={user}/>
+              
+            </div>
+          ))}
+        </div>
       </div>
       }
       <hr />
-     <SendingSection 
-      chatId={chatId}
-      receiver={receiver}
-      setMessages={setMessages}
-     />
+      <SendingSection 
+        chatId={chatId}
+        receiver={receiver}
+        setMessages={setMessages}
+      />
     </div>
   );
 }

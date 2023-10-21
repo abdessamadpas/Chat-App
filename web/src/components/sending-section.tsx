@@ -28,11 +28,9 @@
 
 function SendingSection( {chatId, receiver, setMessages}: any) {
     const [message, setMessage] = React.useState<string>('');
-    const [sentMessages, setSentMessages] = useState<MessageTypes[]>([]);
     const [isOpenedPickerEmoji, setIsOpenedPickerEmoji] = useState<boolean>(false);
     const [file, setFile] = React.useState<File>();
     const [percent, setPercent] = useState<any>(0);
-    const [loadingFailed, setLoadingFailed] = useState<boolean>(false);
     const [sendWithFile, setSendWithFile] = useState<boolean>(false);
     const [audioMode, setAudioMode] = useState<boolean>(false);
   
@@ -54,7 +52,7 @@ function SendingSection( {chatId, receiver, setMessages}: any) {
                 // update progress
                 setPercent(percent);
             },
-            (err) =>setLoadingFailed(true),
+            (err) =>console.log(err),
             () => {
                 // download url
                 getDownloadURL(uploadTask.snapshot.ref).then((url) => {
@@ -63,7 +61,6 @@ function SendingSection( {chatId, receiver, setMessages}: any) {
                     setSendWithFile(false);
                     setPercent(0);
                     setFile(undefined);
-                    setLoadingFailed(false);
                     
                 });
             }

@@ -25,9 +25,6 @@ function SideBar({
   user,onlineFriends,
   notifications,
   invitations,
-  isLoadingNotifications,
-  messages,
-  setNotifications,
   shownMessage,
   setshownMessage
 }: sidebarProps) {
@@ -61,10 +58,6 @@ function SideBar({
   } , 8000)
   }, [shownMessage]);
  
- 
-  //! work on if online or not
-
-
   return (
     <div className="min-w-[96px] flex flex-col justify-center  items-center   h-screen   ">
       <div className='bg-gray-100  flex flex-col items-center  justify-between gap-5  h-screen   pt-10 	px-3  overflow-x-hidden  overflow-y-hidden w-24	'>
@@ -141,8 +134,6 @@ function SideBar({
         </div>
       </div>
       </div>
-      
-      
       <div className="flex flex-col mb-9 ">
         <div className="  bg-white w-10 h-10 flex justify-center items-center rounded-full mt-2">
           <MdPeople size={24} color="#905FF4" />

@@ -60,7 +60,7 @@ function MicrophoneSetup({ audioMode ,setAudioMode}: any) {
     };
 
   const recordAudio =  () => {
-    !permission ? getMicrophonePermission() : null;
+   if( !permission) getMicrophonePermission();
     permission && recordingStatus === "inactive"  ?   startRecording()  : stopRecording()     
     };
     

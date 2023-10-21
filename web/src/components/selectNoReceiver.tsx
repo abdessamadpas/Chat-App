@@ -1,5 +1,3 @@
-import React from 'react'
-
 function SelectReceiverNone() {
     const containerStyle = {
         width: '244px',

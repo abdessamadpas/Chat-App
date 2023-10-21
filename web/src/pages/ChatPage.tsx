@@ -10,17 +10,16 @@ import useDeleteNotification from '../hooks/useDeleteNotifications';
 import PopupModel from '../components/popup-model';
 import useGetUsers from '../hooks/useGetUsers';
 import useInvitations from '../hooks/useInvitaions';
-import SelectReceiverNone from '../components/selectReceiver';
-const host = 'http://localhost:1337';
+import SelectReceiverNone from '../components/selectNoReceiver';
 
+//?* socket connection 
+const host = 'http://localhost:1337';
 export const socket = io(host, {
   transports: ['websocket'],
   reconnection: false,
   rejectUnauthorized: false,
 });
-
-
- export const userId = localStorage.getItem('userId');
+export const userId = localStorage.getItem('userId');
 
 const ChatPage = () => {
 
@@ -45,11 +44,8 @@ const ChatPage = () => {
   } = useGetNotification(userId as string, 'requestFriend');
 
   const {fetchInvitations , errors : invitationErros}  = useInvitations()
-  const {
-    users,
-    isLoading: isLoadingUsers,
-    errors: usersErrors,
-  } = useGetUsers();
+  const { users, isLoading: isLoadingUsers, errors: usersErrors,} = useGetUsers();
+  
   // send ur socket id to the server
   useEffect(() => {
     socket.emit('join-user', userId);
@@ -71,17 +67,12 @@ const ChatPage = () => {
     fetchInvitationsAsync(userId as string);
   }, []);
 
-
-//! working here
-  //todo : get all  notifications
-
   useEffect(() => {
     // This effect will be triggered whenever notificationsMessages changes
     setNotificationsMessages(notificationsMessages);
-  }, [notificationsMessages, messages, unreadmessage]); // Add notificationsMessages as a dependency
+  }, [notificationsMessages, messages, unreadmessage]);
 
   
-  //todo : select receiver
   const selectReceiver = async (receiver: userType) => {
     const generatedChatId = [receiver._id, userId].sort().join('-');
     setChatId(generatedChatId);
@@ -125,7 +116,6 @@ const ChatPage = () => {
       setChatId(chatId);
       socket.emit('join-req-accept', chatId);
     };
-
     const handleReceiveMessages = (newMessage: MessageTypes) => {
       setMessages((messages) => [...messages, newMessage]);
       // setNotificationsMessages((count) => count+1);
@@ -144,17 +134,14 @@ const ChatPage = () => {
         return updateUnreadmessages;
       });
     };
-
     const receiveInvitations = (newInvit: invitationType) => {
       setInvitations((invitations)=>[
         ...invitations, newInvit
       ])
     };
-
     socket.on('receive-friend-request', receiveInvitations);
     socket.on('join-chat-req', handleJoinChat);
     socket.on('receive-message', handleReceiveMessages);
-
     return () => {
       socket.off('join-chat');
       socket.off('join-chat-req');
@@ -165,39 +152,27 @@ const ChatPage = () => {
   }, [receiver]);
 
   useEffect(() => {
-
     socket.on('receive-message-notif', (data: any) => {
       setNotificationsMessages((count) => count+1);
       setshownMessage(data);
     });
-
-    return () => {
-      socket.off('receive-message-notif');
-    }
+    return () => {socket.off('receive-message-notif');}   
   }, []);
   
-
   useEffect(() => {
     const handleOnline = (online:any) => {
-      console.log(userId, 'Is Online!');     
         setOnlineFriends( online);
-      
     };
-  
     const handleOffline = (onlines:any) => {
       setOnlineFriends(onlines);
-      console.log(userId, 'Is Offline!');
     };
-  
     socket.on('online', handleOnline);
     socket.on('offline', handleOffline);
-  
-    // Clean up the event listeners when the component unmounts
     return () => {
-      socket.off('online', handleOnline);
-      socket.off('offline', handleOffline);
+    socket.off('online', handleOnline);
+    socket.off('offline', handleOffline);
     };
-  }, [onlineFriends]); // Make sure to include onlineFriends as a dependency
+  }, [onlineFriends]); 
   
   return (
     <main className="w-full  h-screen p-2   overflow-hidden   bg-gray-100 ">
