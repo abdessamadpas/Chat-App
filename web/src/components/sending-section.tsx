@@ -52,7 +52,8 @@ function SendingSection( {chatId, receiver, setMessages}: any) {
   
       
   const uploadAudioToFirebase = async (audioBlob: Blob) => {
-    const storageRef = ref(storage, 'audio/audioFile.webm')
+    const uniqueIdentifier = generateRandomString(8);
+    const storageRef = ref(storage, `/audio/audioFile_${uniqueIdentifier}.webm`)
     const uploadTask = uploadBytesResumable(storageRef, audioRecorded as any );
     
     uploadTask.on(
@@ -82,38 +83,47 @@ function SendingSection( {chatId, receiver, setMessages}: any) {
         
   async function sendMessage() {
   
-      if (message === '' && file === undefined && audioRecorded == null) return;
+    if (message === '' && file === undefined && audioRecorded == null) return;
 
-      if (file !== undefined) {
-        setSendWithFile(true);
-        uploadFileToFirebase();
+    if (file !== undefined) {
+      setSendWithFile(true);
+      uploadFileToFirebase();
 
-      }
-      if (audioRecorded !== null) {
-        uploadAudioToFirebase(audioRecorded);
-      }
-
-      if (message !== '') {
-        console.log("send message ");
-        const messageData: MessageTypes = {
-          chatId: chatId,
-          sender: user as string,
-          receiver: receiver._id,
-          content: message,
-          time: `${new Date(Date.now()).getHours()}:${new Date(
-            Date.now(),
-          ).getMinutes()}`,
-        };
-        setMessages((prevMessages: MessageTypes[]) => [...prevMessages, messageData]);
-        socket.emit('send-message', messageData);
-        setMessage('');
-      
-       
-      }
-      setAudio(null);
-     
     }
-        
+    if (audioRecorded !== null) {
+      uploadAudioToFirebase(audioRecorded);
+    }
+
+    if (message !== '') {
+      console.log("send message ");
+      const messageData: MessageTypes = {
+        chatId: chatId,
+        sender: user as string,
+        receiver: receiver._id,
+        content: message,
+        time: `${new Date(Date.now()).getHours()}:${new Date(
+          Date.now(),
+        ).getMinutes()}`,
+      };
+      setMessages((prevMessages: MessageTypes[]) => [...prevMessages, messageData]);
+      socket.emit('send-message', messageData);
+      setMessage('');
+    
+      
+    }
+    setAudio(null);
+    
+  }
+function generateRandomString(length : number) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+     
         
         return (
           
