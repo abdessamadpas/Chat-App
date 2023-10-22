@@ -17,15 +17,3 @@ const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 export default storage;
 
-
-// rules for storage
-{/* rules_version = '2';
-
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /{allPaths=**} {
-      allow read, write: if
-          request.time < timestamp.date(2023, 11, 18);
-    }
-  }
-} */}

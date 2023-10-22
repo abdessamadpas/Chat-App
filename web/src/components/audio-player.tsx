@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
-import {
-    MdPlayArrow,
-    MdPause,
-  } from 'react-icons/md';
+
+  import { CiPlay1, CiPause1 } from "react-icons/ci";
 interface WaveformProps {
   url: string;
 }
@@ -11,8 +9,8 @@ interface WaveformProps {
 const formWaveSurferOptions = (ref: React.RefObject<HTMLDivElement>) => ({
   container: ref.current as Element,
   waveColor: "#F3E8FF",
-  progressColor: " #905FF4",
-  cursorColor: "OrangeRed",
+  progressColor: "#905FF4",
+  cursorColor: "#905FF4",
   barWidth: 3,
   barRadius: 3,
   responsive: true,
@@ -25,7 +23,7 @@ const Waveform: React.FC<WaveformProps> = ({ url }) => {
   const waveformRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const [playing, setPlay] = useState(false);
-  const [volume, setVolume] = useState(0.5);
+  const [volume, setVolume] = useState(1);
 
   useEffect(() => {
     setPlay(false);
@@ -61,11 +59,11 @@ const Waveform: React.FC<WaveformProps> = ({ url }) => {
   return (
     <div className="flex flex-row w-96 items-center justify-around ">
       <div id="waveform" ref={waveformRef} className="w-full  " />
-      <div className="controls">
+      <div className="controls mx-4">
         {!playing ?
-            <MdPlayArrow size={23} color="#BDBDBD" onClick={handlePlayPause} />
+            <CiPlay1 size={23} color="#905FF4" onClick={handlePlayPause} />
         : 
-            <MdPause size={23} color="#BDBDBD" onClick={handlePlayPause} />
+            <CiPause1 size={23} color="#905FF4" onClick={handlePlayPause} />
         }
       </div>
     </div>
