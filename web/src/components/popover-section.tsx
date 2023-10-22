@@ -36,11 +36,10 @@ function PopoverSection({ messageData, user }: { messageData: any; user: any }) 
     };
     return date.toLocaleString('en-US', options);
   }
-  const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
 
   const onDownload = async(imageSrc : string) => {
     try {
-      const response = await fetch(corsProxyUrl+imageSrc);
+      const response = await fetch(imageSrc);
       const blob = await response.blob();
       saveAs(blob, 'image.jpg'); // Save the Blob with the specified filename
     } catch (error) {
@@ -48,7 +47,7 @@ function PopoverSection({ messageData, user }: { messageData: any; user: any }) 
     }
   };
   return (
-    <Popover placement="left" content={formatDate(messageData.createdAt)} arrow={mergedArrow}>
+    <Popover placement="left" content={formatDate(messageData.createdAt)} trigger={'click'}>
       {messageData.type === 'text' && (
         <div
           className={`min-h-fit md:max-w-[40%] max-w-[30%] mt-3 text-white py-[14px] px-[18px] rounded-3xl md:text-sm text-xs self-end break-words 
@@ -76,6 +75,7 @@ function PopoverSection({ messageData, user }: { messageData: any; user: any }) 
             src={messageData.content}
             className=' rounded-3xl rounded-br-none w-36 h-auto'
             preview={{
+             
             toolbarRender: (
               _,
               {
@@ -106,7 +106,7 @@ function PopoverSection({ messageData, user }: { messageData: any; user: any }) 
     }`}
   >
     <Waveform
-      url={corsProxyUrl +messageData.content}
+      url={messageData.content}
     
       />
   </div>

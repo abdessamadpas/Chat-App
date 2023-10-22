@@ -44,13 +44,16 @@ const server = app.listen(PORT);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:3001"],
-  },
+    origin: "*",
+    methods: ["GET", "POST"]
+}
 });
 const people = {};
 
 io.on("connection", (socket) => {
   //! on work
+  socket.emit("me", socket.id);
+
 
   socket.on("join-user", (userId) => {
     people[userId] = socket.id;
@@ -117,12 +120,23 @@ io.on("connection", (socket) => {
     }
     return null; 
   }  
+
+  //todo call RTC section
+  socket.on("callUser", ({ userToCall, signalData, from, name }) => {
+    io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+  });
+  socket.on("answerCall", (data) => {
+      io.to(data.to).emit("callAccepted", data.signal)
+  });
+
+  
   socket.on('disconnect', () => {
     const userId = getUserIdBySocketId(socket.id);
     if (userId) {
       delete people[userId];
       io.sockets.emit('offline', people);
     }
+    socket.broadcast.emit("callEnded")
     socket.disconnect();
 
   });
