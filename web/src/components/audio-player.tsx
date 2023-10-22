@@ -57,8 +57,8 @@ const Waveform: React.FC<WaveformProps> = ({ url }) => {
 
 
   return (
-    <div className="flex flex-row w-96 items-center justify-around ">
-      <div id="waveform" ref={waveformRef} className="w-full  " />
+    <div className="flex flex-row w-50 items-center justify-around ">
+      <div id="waveform" ref={waveformRef} className="w-56  " />
       <div className="controls mx-4">
         {!playing ?
             <CiPlay1 size={23} color="#905FF4" onClick={handlePlayPause} />
