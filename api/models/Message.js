@@ -6,6 +6,11 @@ const MessageSchema = new Schema(
     chatId: String,
     sender: String,
     receiver: String,
+    type: {
+      type: String,
+      enum: ["text", "audio", "file"],
+      default: "text",
+    },
     content: String,
     isRead: {
       type: Boolean,

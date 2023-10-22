@@ -1,7 +1,5 @@
 import React from 'react';
 import { Empty } from 'antd';
-
-
 // icons used in this screen
 import {
   MdMap,
@@ -10,10 +8,8 @@ import {
 } from 'react-icons/md';
 import { MessageTypes, userType } from '../types';
 import {user} from '../App';
-
 import SkeletonSection from './skeletonSection';
 import PopoverSection from './popover-section';
-
 import SendingSection from './sending-section';
 
 interface sendBoxProps {
@@ -23,7 +19,6 @@ interface sendBoxProps {
   setMessages: React.Dispatch<React.SetStateAction<MessageTypes[]>>;
   loading : boolean
   onlineFriends : {}
-
 }
 
 function ChatSection({
@@ -94,10 +89,8 @@ function ChatSection({
               key={index}
               className={`mb-2 ${
                 messageData.sender === user ? 'text-right' : 'text-left'
-              }`}
-            >
+              }`}>
               <PopoverSection messageData ={messageData} user={user}/>
-              
             </div>
           ))}
         </div>

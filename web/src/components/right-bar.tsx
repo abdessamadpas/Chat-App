@@ -27,7 +27,7 @@ function RightBar({invitations,setInvitations}:RightBarProps) {
 
   return (
     <div className="hidden  lg:block    h-screen overflow-y-auto overflow-x-hidden  w-1/4  ">
-      <div className="   pt-16 px-5   ">
+      <div className="   pt-10 px-5   ">
         {/* 1 */}
         <div className="flex flex-row items-center justify-between">
           <div className="flex flex-row items-center  gap-2 ">

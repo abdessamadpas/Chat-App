@@ -3,6 +3,7 @@ export interface MessageTypes {
   chatId: string;
   sender: string;
   receiver: string;
+  type?: string;
   content: string;
   time: string;
   

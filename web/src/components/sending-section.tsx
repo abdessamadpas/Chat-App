@@ -37,10 +37,20 @@ function SendingSection( {chatId, receiver, setMessages}: any) {
         },
         (err) =>console.log(err),
         () => {
-          // download url
+          // extract url and update message object
           getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-              console.log(url);
-              console.log(percent);
+            const messageData: MessageTypes = {
+              chatId: chatId,
+              sender: user as string,
+              receiver: receiver._id,
+              type: "file",
+              content: url,
+              time: `${new Date(Date.now()).getHours()}:${new Date(
+                Date.now(),
+              ).getMinutes()}`,
+            };
+            setMessages((prevMessages: MessageTypes[]) => [...prevMessages, messageData]);
+            socket.emit('send-message', messageData);
               setSendWithFile(false);
               setPercent(0);
               setFile(undefined);
@@ -70,11 +80,22 @@ function SendingSection( {chatId, receiver, setMessages}: any) {
         () => {
           // download url
           getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-            console.log('Audio uploaded and accessible at', url);
-            console.log(percent);
-            setSendWithFile(false);
+            const messageData: MessageTypes = {
+              chatId: chatId,
+              sender: user as string,
+              receiver: receiver._id,
+              type: "audio",
+              content: url,
+              time: `${new Date(Date.now()).getHours()}:${new Date(
+                Date.now(),
+              ).getMinutes()}`,
+            };
+            setMessages((prevMessages: MessageTypes[]) => [...prevMessages, messageData]);
+            socket.emit('send-message', messageData);
             setPercent(0);
-            setFile(undefined);
+            setAudioRecorded(null);
+            setAudio(null);
+
             
         }).catch(err => console.log(err));
       }
@@ -84,12 +105,21 @@ function SendingSection( {chatId, receiver, setMessages}: any) {
   async function sendMessage() {
   
     if (message === '' && file === undefined && audioRecorded == null) return;
-
+    const messageData: MessageTypes = {
+      chatId: chatId,
+      sender: user as string,
+      receiver: receiver._id,
+      content: message,
+      time: `${new Date(Date.now()).getHours()}:${new Date(
+        Date.now(),
+      ).getMinutes()}`,
+    };
     if (file !== undefined) {
       setSendWithFile(true);
       uploadFileToFirebase();
 
     }
+    
     if (audioRecorded !== null) {
       uploadAudioToFirebase(audioRecorded);
     }
@@ -100,6 +130,7 @@ function SendingSection( {chatId, receiver, setMessages}: any) {
         chatId: chatId,
         sender: user as string,
         receiver: receiver._id,
+        type: "text",
         content: message,
         time: `${new Date(Date.now()).getHours()}:${new Date(
           Date.now(),
@@ -108,10 +139,9 @@ function SendingSection( {chatId, receiver, setMessages}: any) {
       setMessages((prevMessages: MessageTypes[]) => [...prevMessages, messageData]);
       socket.emit('send-message', messageData);
       setMessage('');
-    
-      
+
     }
-    setAudio(null);
+    // setAudio(null);
     
   }
 function generateRandomString(length : number) {
