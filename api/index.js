@@ -122,14 +122,23 @@ io.on("connection", (socket) => {
   }  
 
   //todo call RTC section
+
+
   socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-    io.to(userToCall).emit("callUser", { signal: signalData, from, name });
+  console.log("callUser", userToCall, from, name);
+    const UserToCallSocketId = getUserSocketId(userToCall);
+console.log("UserToCallSocketId", UserToCallSocketId);
+    io.to(UserToCallSocketId).emit("callUser", { signal: signalData, from, name });
   });
   socket.on("answerCall", (data) => {
       io.to(data.to).emit("callAccepted", data.signal)
   });
 
-  
+  // ! get socket id by user id
+  socket.on("getSocketId", (userId) => {
+    const socketId = getUserSocketId(userId);
+    socket.emit("socketId", socketId);
+  });
   socket.on('disconnect', () => {
     const userId = getUserIdBySocketId(socket.id);
     if (userId) {

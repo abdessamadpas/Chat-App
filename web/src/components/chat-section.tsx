@@ -11,6 +11,7 @@ import {user} from '../App';
 import SkeletonSection from './skeletonSection';
 import PopoverSection from './popover-section';
 import SendingSection from './sending-section';
+import VideoSection from './video-section';
 
 interface sendBoxProps {
   chatId: string;
@@ -19,9 +20,11 @@ interface sendBoxProps {
   setMessages: React.Dispatch<React.SetStateAction<MessageTypes[]>>;
   loading : boolean
   onlineFriends : {}
+  me : string
 }
 
 function ChatSection({
+  me,
   chatId,
   messages,
   receiver,
@@ -30,7 +33,12 @@ function ChatSection({
   onlineFriends
 }: sendBoxProps) {
 
+const [videoMode, setVideoMode] = React.useState(false);
+const handleVideoCall = () => {
+    setVideoMode(true)
+}
   return (
+    videoMode && <VideoSection receiver={receiver} me={me}/> ||
     <div className="  flex flex-col flex-grow max-w-screen-xl  rounded-2xl bg-white   max-h-screen " >
       {/*  header */}
       <div className="  py-5 flex  justify-between px-9 items-center">
@@ -67,7 +75,7 @@ function ChatSection({
           <div className="  bg-gray-200 w-10 h-10 flex justify-center items-center rounded-full">
             <MdCall size={20} color="#905FF4" />
           </div>
-          <div className="px-3 py-2  h-10  w-40 bg-main-color rounded-full">
+          <div className="px-3 py-2  h-10  w-40 bg-main-color rounded-full" onClick={()=>handleVideoCall()}>
             <p className="text-white">Go to conference</p>
           </div>
           <MdMoreVert size={20} color="#BDBDBD" />

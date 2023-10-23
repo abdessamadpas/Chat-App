@@ -32,6 +32,7 @@ const ChatPage = () => {
   const [onlineFriends, setOnlineFriends] = useState({});
   const { fetchMessages, errors, loading } = useGetMessages();
   const [shownMessage, setshownMessage] = useState({});
+  const [me, setMe] = useState('');
   const {
     notificationsCount : notificationsMessages,
     isLoading : isLoadingNotifMessages,
@@ -142,6 +143,8 @@ const ChatPage = () => {
     socket.on('receive-friend-request', receiveInvitations);
     socket.on('join-chat-req', handleJoinChat);
     socket.on('receive-message', handleReceiveMessages);
+    socket.on('me', (id) => setMe(id));
+
     return () => {
       socket.off('join-chat');
       socket.off('join-chat-req');
@@ -207,6 +210,7 @@ const ChatPage = () => {
             onlineFriends={onlineFriends}
             receiver={receiver}
             loading = {loading}
+            me = {me}
 
           />
         ) : (
