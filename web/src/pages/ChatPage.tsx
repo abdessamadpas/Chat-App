@@ -194,7 +194,7 @@ const ChatPage = () => {
     socket.off('offline', handleOffline);
     };
   }, [onlineFriends]); 
-    // useDragger("pink-box")
+  //  useDragger("pink-box")
  
   return (
     <main className="w-full  h-screen p-2   overflow-hidden   bg-gray-100  relative">

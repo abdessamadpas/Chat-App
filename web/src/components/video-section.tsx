@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { Box, Heading, Container,Grid } from '@chakra-ui/react';
-import NotificationsCall from './notifications-call';
 import OptionsCall from './options-call';
 import VideoPlayer from './video-player';
 import io from 'socket.io-client';
@@ -8,6 +7,7 @@ import Peer from 'simple-peer';
 import {socket} from '../pages/ChatPage';
 import { IoCallSharp } from "react-icons/io5";
 import { MdCallEnd } from "react-icons/md";
+import CallTools from './call-tools';
 
 function VideoSection({receiver, me, caller, callerSignal, name}:any) {
 
@@ -79,11 +79,7 @@ function VideoSection({receiver, me, caller, callerSignal, name}:any) {
         
         <VideoPlayer name={name} callAccepted={callAccepted} myVideo={myVideo} userVideo={userVideo} callEnded={callEnded} stream={stream} call={callAccepted} />
       <div className='flex flex-row justify-around'>
-        <div>
-        <button onClick={callUser} className=' bg-blue-500'>
-          call
-        </button>
-      </div>
+       <CallTools callUser={callUser} />
       {
         (caller && !callAccepted  ) ?
         <div className="flex flex-row absolute top-1 right-1 p-3 bg-[#1F1E31] rounded-full  justify-between items-center gap-20 z-10 ">
@@ -117,6 +113,7 @@ function VideoSection({receiver, me, caller, callerSignal, name}:any) {
       } 
       </div>
 
+        
     </div>
     
 

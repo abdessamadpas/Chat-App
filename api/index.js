@@ -123,7 +123,7 @@ io.on("connection", (socket) => {
 
   //todo call RTC section
   socket.on("callUser", (data) => {
-    console.log("call send to backend" , data);
+    console.log("call send to backend");
     const UserToCallSocketId = getUserSocketId(data.userToCall);
     socket.to(UserToCallSocketId).emit("callUser", data);
   });
