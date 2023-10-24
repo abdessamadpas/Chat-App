@@ -103,7 +103,6 @@ React.useEffect(() => {
          let timer : any ;
  
    React.useEffect(() => {
-     console.log('u are here');
      if (recordingStatus === "recording") {
        clearInterval(timer);
        const startTime = Date.now();

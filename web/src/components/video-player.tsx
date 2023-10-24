@@ -3,34 +3,30 @@ import { Grid, Box, Heading } from "@chakra-ui/react"
 
 function VideoPlayer({ name, callAccepted, myVideo, userVideo, callEnded, stream, call }:any) {
   return (
-    <Grid justifyContent="center" templateColumns='repeat(2, 1fr)' mt="12">
+   
+    <div className='w-[640px] h-[480px]' >
             {/* my video */}
             {
                 stream && (
-                    <Box>
-                        <Grid >
-                            <Heading as="h5">
-                                {name || 'Name'}
-                            </Heading>
-                            <video playsInline muted ref={myVideo} autoPlay width="600" />
-                        </Grid>
-                    </Box>
+                   <div className=' w-full h-full relative  '>
+                       <video playsInline muted ref={myVideo} autoPlay  className='rounded-3xl' />
+                       
+                       {
+                        callAccepted && !callEnded && (
+                    
+                                <div  className=' w-20 h-28 absolute bottom-0 right-2'>
+                                    <p>to</p>
+                                    <video playsInline ref={userVideo} autoPlay  className='rounded-xl'  />
+                                </div>
+                        )
+            }
+                   </div>
+                        
+                
                 )
             }
-            {/* user's video */}
-            {
-                callAccepted && !callEnded && (
-                    <Box>
-                        <Grid >
-                            <Heading as="h5">
-                                {call.name || 'Name'}
-                            </Heading>
-                            <video playsInline ref={userVideo} autoPlay width="600" />
-                        </Grid>
-                    </Box>
-                )
-            }
-        </Grid>
+           
+        </div>
   )
 }
 

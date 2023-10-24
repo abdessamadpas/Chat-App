@@ -8,7 +8,6 @@ const deleteNotification = async (req, res) => {
       { _id: sender },
       { $pull: { notifications: { sender : receiver } } },
     ).then((res) => {
-      console.log("notification deleted",res);
     });
     res.json({ deleteNotify: true });
   } catch (error) {

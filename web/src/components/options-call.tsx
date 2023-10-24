@@ -1,11 +1,9 @@
 import React from 'react'
 
-function OptionsCall({callUser}:any) {
+function OptionsCall() {
   return (
     <div>
-      <button onClick={callUser}>
-        call this user
-      </button>
+        options
     </div>
   )
 }

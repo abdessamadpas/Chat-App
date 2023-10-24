@@ -11,6 +11,7 @@ import PopupModel from '../components/popup-model';
 import useGetUsers from '../hooks/useGetUsers';
 import useInvitations from '../hooks/useInvitaions';
 import SelectReceiverNone from '../components/selectNoReceiver';
+import useDragger from '../hooks/useDragabele';
 
 //?* socket connection 
 const host = 'http://localhost:1337';
@@ -47,6 +48,23 @@ const ChatPage = () => {
   const {fetchInvitations , errors : invitationErros}  = useInvitations()
   const { users, isLoading: isLoadingUsers, errors: usersErrors,} = useGetUsers();
   
+  //todo : for a call
+  const [receivingCall, setReceivingCall] = useState(false);
+  const[caller, setCaller] = useState('');
+  const[callerSignal, setCallerSignal] = useState<any | null>(null);
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    socket.on('callUser',(data) => {
+      console.log("u get a call from call user");
+      
+      setReceivingCall(true);
+      setCaller(data.from);
+      setName(data.callerName);
+      setCallerSignal(data.signalData);
+  });
+  }, []);
+
   // send ur socket id to the server
   useEffect(() => {
     socket.emit('join-user', userId);
@@ -176,10 +194,14 @@ const ChatPage = () => {
     socket.off('offline', handleOffline);
     };
   }, [onlineFriends]); 
-  
+    // useDragger("pink-box")
+ 
   return (
-    <main className="w-full  h-screen p-2   overflow-hidden   bg-gray-100 ">
-      <div className="flex flex-row  ">
+    <main className="w-full  h-screen p-2   overflow-hidden   bg-gray-100  relative">
+        {/* <div id='pink-box' className=' absolute top-0 left-0 cursor-pointer z-10 h-32 w-52 bg-slate-950'  > </div>  */}
+
+      <div    className="flex flex-row  ">
+      
         <SideBar
           selectReceiver={selectReceiver}
           togglePopup={togglePopup}
@@ -210,7 +232,15 @@ const ChatPage = () => {
             onlineFriends={onlineFriends}
             receiver={receiver}
             loading = {loading}
+
             me = {me}
+            name = {name}
+            callerSignal = {callerSignal}
+            caller = {caller}
+            receivingCall = {receivingCall}
+            setReceivingCall = {setReceivingCall}
+          
+
 
           />
         ) : (

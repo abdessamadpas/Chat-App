@@ -12,7 +12,7 @@ import SkeletonSection from './skeletonSection';
 import PopoverSection from './popover-section';
 import SendingSection from './sending-section';
 import VideoSection from './video-section';
-
+import { IoVideocamOutline, IoCallOutline ,IoMapOutline} from "react-icons/io5";
 interface sendBoxProps {
   chatId: string;
   receiver: userType;
@@ -21,6 +21,11 @@ interface sendBoxProps {
   loading : boolean
   onlineFriends : {}
   me : string
+  name  : string
+  callerSignal  : string
+  caller  : string 
+  receivingCall   : boolean
+  setReceivingCall  : React.Dispatch<React.SetStateAction<boolean>>
 }
 
 function ChatSection({
@@ -30,15 +35,22 @@ function ChatSection({
   receiver,
   setMessages,
   loading,
-  onlineFriends
+  onlineFriends,
+  name,
+  callerSignal,
+  caller,
+  receivingCall,
+  setReceivingCall
 }: sendBoxProps) {
 
-const [videoMode, setVideoMode] = React.useState(false);
-const handleVideoCall = () => {
-    setVideoMode(true)
-}
+  const [videoMode, setVideoMode] = React.useState(false);
+  const handleVideoCall = () => {
+   
+    
+    setVideoMode(!videoMode)
+  }
+
   return (
-    videoMode && <VideoSection receiver={receiver} me={me}/> ||
     <div className="  flex flex-col flex-grow max-w-screen-xl  rounded-2xl bg-white   max-h-screen " >
       {/*  header */}
       <div className="  py-5 flex  justify-between px-9 items-center">
@@ -59,7 +71,6 @@ const handleVideoCall = () => {
                 <div className="absolute w-4 h-4 bg-purple-200 bg-opacity-40 rounded-full  flex justify-center items-center ">
                   <div className="relative w-2 h-2 bg-purple-600 rounded-full  "></div>
                 </div> 
-
                 <p className=" font-extralight ml-5  text-xs text-gray-400">
                   Online
                 </p>
@@ -70,20 +81,35 @@ const handleVideoCall = () => {
         </div>
         <div className="flex gap-3  justify-center items-center">
           <div className="  bg-gray-200 w-10 h-10 flex justify-center items-center rounded-full">
-            <MdMap size={20} color="#905FF4" />
+            <IoMapOutline size={20} color="#905FF4" />
           </div>
           <div className="  bg-gray-200 w-10 h-10 flex justify-center items-center rounded-full">
-            <MdCall size={20} color="#905FF4" />
+            <IoCallOutline size={20} color="#905FF4" />
           </div>
-          <div className="px-3 py-2  h-10  w-40 bg-main-color rounded-full" onClick={()=>handleVideoCall()}>
+          <div className="  bg-gray-200 w-10 h-10 flex justify-center items-center rounded-full" onClick={()=>handleVideoCall()}>
+            <IoVideocamOutline size={20} color="#905FF4" />
+          </div>
+          {/* <div className="px-3 py-2  h-10  w-40 bg-main-color rounded-full" onClick={()=>handleVideoCall()}>
             <p className="text-white">Go to conference</p>
-          </div>
+          </div> */}
           <MdMoreVert size={20} color="#BDBDBD" />
         </div>
       </div>
       <hr />
       {/* body */}
-      {loading ? 
+{      videoMode ? 
+    <div className="  flex flex-col flex-grow max-w-screen-xl  rounded-2xl bg-white   max-h-screen " >
+      <VideoSection receiver={receiver}
+        me={me}
+        caller={caller}
+        name={name}
+        callerSignal={callerSignal}
+        receivingCall={receivingCall}
+        setReceivingCall={setReceivingCall}
+        
+        />
+    </div> :
+      loading ? 
       <div className="flex justify-center items-center h-full"> <SkeletonSection/></div> 
 
       : {messages} && messages.length === 0 ? 
@@ -103,7 +129,7 @@ const handleVideoCall = () => {
           ))}
         </div>
       </div>
-      }
+      } 
       <hr />
       <SendingSection 
         chatId={chatId}
