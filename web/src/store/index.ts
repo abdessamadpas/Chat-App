@@ -7,7 +7,7 @@ import invitationsSlice from './slices/invitationsSlice'
 
 
 
- const store = configureStore({
+const store = configureStore({
     reducer: {
         message: messageSlice,
         notification: notificationSlice,

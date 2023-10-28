@@ -48,7 +48,7 @@ const ChatPage = () => {
   const {fetchInvitations , errors : invitationErros}  = useInvitations()
   const { users, isLoading: isLoadingUsers, errors: usersErrors,} = useGetUsers();
   
-  //todo : for a call
+  //todo : fo r a call
   const [receivingCall, setReceivingCall] = useState(false);
   const[caller, setCaller] = useState('');
   const[callerSignal, setCallerSignal] = useState<any | null>(null);
