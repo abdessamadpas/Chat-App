@@ -171,7 +171,7 @@ app.get("/setnotif", (req, res) => {
 });
 app.get("/users", getUsers);
 
-// * routes chat
+// *  chat routes 
 app.get("/friends/:userId", getFriends);
 app.post("/addfriend/:sender/:receiver", addFriend);
 app.get("/messages/:senderId/:receiverId", getMessages);
