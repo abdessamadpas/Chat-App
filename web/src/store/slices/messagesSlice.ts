@@ -10,7 +10,7 @@ const initialState: MessagesState = {
 };
 
 const messagesSlice = createSlice({
-  name: 'messages ',
+  name: 'messages',
   initialState,
   reducers: {
     setMessages: (state, action: PayloadAction<MessageTypes[]>) => {
