@@ -33,7 +33,7 @@ const PORT = process.env.PORT;
 mongoose
   .connect(DB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then((res) => {
-    console.log("server running");
+    console.log("server running ");
   })
   .catch((err) => {
     console.log(err);
@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
   socket.emit("me", socket.id);
 
 
-  socket.on("join-user", (userId) => {
+  socket.on("join-user", (userId) => {n
     people[userId] = socket.id;
     //* USER IS ONLINE BROAD CAST TO ALL CONNECTED USERS
     io.sockets.emit("online", people);
@@ -121,7 +121,7 @@ io.on("connection", (socket) => {
     return null; 
   }  
 
-  //todo call RTC section
+  //todo call RTC sectionds
   socket.on("callUser", (data) => {
     console.log("call send to backend");
     const UserToCallSocketId = getUserSocketId(data.userToCall);
