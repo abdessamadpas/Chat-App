@@ -31,8 +31,12 @@ const getInvitation = async (req, res)=>{
         return res.status(400).json({ message: " user id is required " });
     }
     const user = await User.findById(userId);
+    console.log(userId);
+if(!user){
+    return res.status(400).json({ message: " user not found " });
+}
 
-    const invitations = user.invitations;
+     const invitations = user.invitations;
     if(invitations.length === 0){
         return res.status(400).json({ message: "there is no invitation to this user" });
     }

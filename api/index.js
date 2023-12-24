@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
   socket.emit("me", socket.id);
 
 
-  socket.on("join-user", (userId) => {n
+  socket.on("join-user", (userId) => {
     people[userId] = socket.id;
     //* USER IS ONLINE BROAD CAST TO ALL CONNECTED USERS
     io.sockets.emit("online", people);

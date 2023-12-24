@@ -131,11 +131,13 @@ function ChatSection({
       </div>
       } 
       <hr />
+      {      !videoMode ? 
       <SendingSection 
         chatId={chatId}
         receiver={receiver}
         setMessages={setMessages}
-      />
+      /> : null}
+
     </div>
   );
 }
